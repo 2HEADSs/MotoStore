@@ -2,7 +2,6 @@ import { ConflictException, Injectable, InternalServerErrorException } from '@ne
 import { DatabaseService } from 'src/module/database/database.service';
 import { CreateUserRequestBodyDto, UserResponseBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -16,17 +15,27 @@ export class UsersService {
             const user = await this.db.user.create({
                 data: {
                     email: data.email,
-                    password: hashedPassword,
+                    userName: data.userName,
+                    phone: data.phone,
+                    hashedPassword: hashedPassword,
                 },
                 select: {
                     id: true,
                     email: true,
+                    userName: true,
+                    phone: true,
+                    createdAt: true,
+                    updatedAt: true,
                 },
             });
             console.log("Created user:", user);
             return {
                 id: user.id,
-                email: user.email
+                email: user.email,
+                userName: user.userName,
+                phone: user.phone,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
             };
         } catch (error) {
             if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
@@ -43,6 +52,10 @@ export class UsersService {
                 select: {
                     id: true,
                     email: true,
+                    userName: true,
+                    phone: true,
+                    createdAt: true,
+                    updatedAt: true,
                 }
             });
         } catch (error) {

@@ -16,12 +16,11 @@ datasource db {
 model User {
   id             String   @id @default(uuid())
   email          String   @unique
-  firstName      String   @default("")
-  lastName       String   @default("")
-  phone          String   @default("")
-  hashedPassword String   @default("")
+  userName       String   @db.VarChar(20)
+  phone          String   @unique
+  hashedPassword String
   ownedBikes     Bike[]   @relation(name: "CreatedByUser")
-  likedBikes     Bike[]   @relation(name: "liked")
+  likedBikes     Bike[]   @relation(name: "UserToBikeLikes")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -30,20 +29,20 @@ model User {
 
 model Bike {
   id             String       @id @default(uuid())
-  model          String       @db.VarChar(255)
+  model          String       @db.VarChar(20)
   manufacturer   Manufacturer
-  color          String       @db.VarChar(50)
-  engineCapacity Float
-  horsePower     Float
+  color          BikeColor
+  engineCapacity Int
+  horsePower     Int
   price          Prices[]
   year           Int
   used           Boolean
-  img            String? // Optional
-  description    String       @default("Random Description")
+  img            String?      @default("")
+  description    String?      @default("")
   ownerId        String
   owner          User         @relation(fields: [ownerId], references: [id], name: "CreatedByUser")
   location       String       @db.VarChar(100)
-  likedByUsers   User[]       @relation(name: "liked")
+  likedByUsers   User[]       @relation(name: "UserToBikeLikes")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   status         BikeStatus   @default(ACTIVE)
@@ -66,176 +65,199 @@ enum BikeStatus {
   DRAFT
 }
 
+enum BikeColor {
+  BLACK
+  WHITE
+  RED
+  BLUE
+  GREEN
+  YELLOW
+  ORANGE
+  SILVER
+  GRAY
+  BROWN
+  BEIGE
+  GOLD
+  PURPLE
+  PINK
+  BRONZE
+  CHROME
+  MATTE_BLACK
+  MATTE_GRAY
+  TWO_TONE
+  CUSTOM
+}
+
 enum Manufacturer {
-  Access_Motor
-  Adly
-  Aeon
-  AGM_MOTORS
-  Aixam
-  American_Ironhorse
-  Aprilia
-  Arctic_Cat
-  Baotian
-  Barossa
-  Bashan
-  Beeline
-  Benelli
-  Beta
-  Big_Dog_Motorcycles
-  Bimota
-  Black_Tea
-  Blata
-  BMW
-  Bombardier
-  Boom
-  Brixton
-  Brough_Superior
-  BRP
-  BSA
-  Buell
-  Burelli
-  Cagiva
-  Can_Am
-  Cectek
-  CFMOTO
-  CPI
-  Daelim
-  Derbi
-  Dinli
-  DKW
-  DREEMS
-  Ducati
-  e_max
-  emco
-  Energica
-  e_Schwalbe
-  E_Ton
-  evmoto
-  Explorer
-  Fantic
-  FB_Mondial
-  Felo_Moto
-  Futura
-  Gasgas
-  Generic
-  GG_Motorradtechnik
-  Gilera
-  GOES
-  Gorilla
-  Govecs
-  Harley_Davidson
-  Heinkel
-  Hercules
-  Herkules
-  Honda
-  Horex
-  Horwin
-  Husaberg
-  Husqvarna
-  Hyosung
-  Indian
-  Italjet
-  Jawa
-  Jinling
-  Kawasaki
-  KAYO
-  Keeway
-  Kimi
-  KL_Mobility_Piper
-  Knievel
-  Kreidler
-  KSR
-  KTM
-  Kumpan
-  Kymco
-  Lambretta
-  Laverda
-  Lifan
-  Linhai
-  LiveWire
-  LML
-  Loncin
-  Luxxon
-  Maico
-  Malaguti
-  Mash
-  MBK
-  Megelli
-  Metorbike
-  Motobi
-  Moto_Guzzi
-  Moto_Morini
-  Motowell
-  Motron
-  MV_Agusta
-  Mz
-  NAON
-  Nerva
-  NITO
-  NIU
-  Norton
-  NSU
-  Odes
-  Online
-  Pegasus
-  Peugeot
-  PGO
-  Piaggio
-  Piper
-  PohlBock
-  Polaris
-  Puch
-  QJ_Motor
-  Quadix
-  Quadro
-  Ray
-  Rewaco
-  RGNT
-  Rieju
-  Rivero
-  Royal_Alloy
-  Royal_Enfield
-  Sachs
-  Scrooser
-  Seat
-  Segway
-  Seikel
-  Sherco
-  Shineray
-  Si_o
-  Silence
-  Simson
-  Skyteam
-  SMC
-  Stark
-  Steereon
-  Stels
-  Super_Soco
-  Sur_Ron
-  Suzuki
-  SWM
-  SYM
-  Talaria
-  Tauris
-  TGB
-  Thunderbike
-  TiSTO
-  TM
-  Triton
-  Triumph
-  TRS
-  UM
-  Ural
-  Vespa
-  VICTORY
-  VOGE
-  Voltago
-  Voxan
-  WMI
-  Yamaha
-  Zero
-  Zhongyu
-  Zontes
-  Zündapp
-  Other
+  Access_Motor        @map("Access Motor")
+  Adly                @map("Adly")
+  Aeon                @map("Aeon")
+  AGM_MOTORS          @map("AGM MOTORS")
+  Aixam               @map("Aixam")
+  American_Ironhorse  @map("American Ironhorse")
+  Aprilia             @map("Aprilia")
+  Arctic_Cat          @map("Arctic Cat")
+  Baotian             @map("Baotian")
+  Barossa             @map("Barossa")
+  Bashan              @map("Bashan")
+  Beeline             @map("Beeline")
+  Benelli             @map("Benelli")
+  Beta                @map("Beta")
+  Big_Dog_Motorcycles @map("Big Dog Motorcycles")
+  Bimota              @map("Bimota")
+  Black_Tea           @map("Black Tea")
+  Blata               @map("Blata")
+  BMW                 @map("BMW")
+  Bombardier          @map("Bombardier")
+  Boom                @map("Boom")
+  Brixton             @map("Brixton")
+  Brough_Superior     @map("Brough Superior")
+  BRP                 @map("BRP")
+  BSA                 @map("BSA")
+  Buell               @map("Buell")
+  Burelli             @map("Burelli")
+  Cagiva              @map("Cagiva")
+  Can_Am              @map("Can Am")
+  Cectek              @map("Cectek")
+  CFMOTO              @map("CFMOTO")
+  CPI                 @map("CPI")
+  Daelim              @map("Daelim")
+  Derbi               @map("Derbi")
+  Dinli               @map("Dinli")
+  DKW                 @map("DKW")
+  DREEMS              @map("DREEMS")
+  Ducati              @map("Ducati")
+  e_max               @map("e max")
+  emco                @map("emco")
+  Energica            @map("Energica")
+  e_Schwalbe          @map("e Schwalbe")
+  E_Ton               @map("E Ton")
+  evmoto              @map("evmoto")
+  Explorer            @map("Explorer")
+  Fantic              @map("Fantic")
+  FB_Mondial          @map("FB Mondial")
+  Felo_Moto           @map("Felo Moto")
+  Futura              @map("Futura")
+  Gasgas              @map("Gasgas")
+  Generic             @map("Generic")
+  GG_Motorradtechnik  @map("GG Motorradtechnik")
+  Gilera              @map("Gilera")
+  GOES                @map("GOES")
+  Gorilla             @map("Gorilla")
+  Govecs              @map("Govecs")
+  Harley_Davidson     @map("Harley Davidson")
+  Heinkel             @map("Heinkel")
+  Hercules            @map("Hercules")
+  Herkules            @map("Herkules")
+  Honda               @map("Honda")
+  Horex               @map("Horex")
+  Horwin              @map("Horwin")
+  Husaberg            @map("Husaberg")
+  Husqvarna           @map("Husqvarna")
+  Hyosung             @map("Hyosung")
+  Indian              @map("Indian")
+  Italjet             @map("Italjet")
+  Jawa                @map("Jawa")
+  Jinling             @map("Jinling")
+  Kawasaki            @map("Kawasaki")
+  KAYO                @map("KAYO")
+  Keeway              @map("Keeway")
+  Kimi                @map("Kimi")
+  KL_Mobility_Piper   @map("KL Mobility Piper")
+  Knievel             @map("Knievel")
+  Kreidler            @map("Kreidler")
+  KSR                 @map("KSR")
+  KTM                 @map("KTM")
+  Kumpan              @map("Kumpan")
+  Kymco               @map("Kymco")
+  Lambretta           @map("Lambretta")
+  Laverda             @map("Laverda")
+  Lifan               @map("Lifan")
+  Linhai              @map("Linhai")
+  LiveWire            @map("LiveWire")
+  LML                 @map("LML")
+  Loncin              @map("Loncin")
+  Luxxon              @map("Luxxon")
+  Maico               @map("Maico")
+  Malaguti            @map("Malaguti")
+  Mash                @map("Mash")
+  MBK                 @map("MBK")
+  Megelli             @map("Megelli")
+  Metorbike           @map("Metorbike")
+  Motobi              @map("Motobi")
+  Moto_Guzzi          @map("Moto Guzzi")
+  Moto_Morini         @map("Moto Morini")
+  Motowell            @map("Motowell")
+  Motron              @map("Motron")
+  MV_Agusta           @map("MV Agusta")
+  Mz                  @map("Mz")
+  NAON                @map("NAON")
+  Nerva               @map("Nerva")
+  NITO                @map("NITO")
+  NIU                 @map("NIU")
+  Norton              @map("Norton")
+  NSU                 @map("NSU")
+  Odes                @map("Odes")
+  Online              @map("Online")
+  Pegasus             @map("Pegasus")
+  Peugeot             @map("Peugeot")
+  PGO                 @map("PGO")
+  Piaggio             @map("Piaggio")
+  Piper               @map("Piper")
+  PohlBock            @map("PohlBock")
+  Polaris             @map("Polaris")
+  Puch                @map("Puch")
+  QJ_Motor            @map("QJ Motor")
+  Quadix              @map("Quadix")
+  Quadro              @map("Quadro")
+  Ray                 @map("Ray")
+  Rewaco              @map("Rewaco")
+  RGNT                @map("RGNT")
+  Rieju               @map("Rieju")
+  Rivero              @map("Rivero")
+  Royal_Alloy         @map("Royal Alloy")
+  Royal_Enfield       @map("Royal Enfield")
+  Sachs               @map("Sachs")
+  Scrooser            @map("Scrooser")
+  Seat                @map("Seat")
+  Segway              @map("Segway")
+  Seikel              @map("Seikel")
+  Sherco              @map("Sherco")
+  Shineray            @map("Shineray")
+  Si_o                @map("Si.o")
+  Silence             @map("Silence")
+  Simson              @map("Simson")
+  Skyteam             @map("Skyteam")
+  SMC                 @map("SMC")
+  Stark               @map("Stark")
+  Steereon            @map("Steereon")
+  Stels               @map("Stels")
+  Super_Soco          @map("Super Soco")
+  Sur_Ron             @map("Sur Ron")
+  Suzuki              @map("Suzuki")
+  SWM                 @map("SWM")
+  SYM                 @map("SYM")
+  Talaria             @map("Talaria")
+  Tauris              @map("Tauris")
+  TGB                 @map("TGB")
+  Thunderbike         @map("Thunderbike")
+  TiSTO               @map("TiSTO")
+  TM                  @map("TM")
+  Triton              @map("Triton")
+  Triumph             @map("Triumph")
+  TRS                 @map("TRS")
+  UM                  @map("UM")
+  Ural                @map("Ural")
+  Vespa               @map("Vespa")
+  VICTORY             @map("VICTORY")
+  VOGE                @map("VOGE")
+  Voltago             @map("Voltago")
+  Voxan               @map("Voxan")
+  WMI                 @map("WMI")
+  Yamaha              @map("Yamaha")
+  Zero                @map("Zero")
+  Zhongyu             @map("Zhongyu")
+  Zontes              @map("Zontes")
+  Zündapp            @map("Zündapp")
+  Other               @map("Other")
 }

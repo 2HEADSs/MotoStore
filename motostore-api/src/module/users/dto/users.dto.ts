@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length, Matches } from "class-validator";
 
 export class CreateUserRequestBodyDto {
     @IsNotEmpty()
@@ -6,10 +6,26 @@ export class CreateUserRequestBodyDto {
     email: string;
 
     @IsNotEmpty()
+    @Length(8, 100)
     password: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @Length(3, 20)
+    userName: string;
+
+    @IsNotEmpty()
+    @Matches(/^\+\d{10,15}$/, {
+        message: "Phone number must be in international format, e.g., +1234567890"
+    })
+    phone: string;
 }
 
 export class UserResponseBodyDto {
     id: string;
     email: string;
+    userName: string;
+    phone: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

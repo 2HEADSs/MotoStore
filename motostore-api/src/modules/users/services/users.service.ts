@@ -28,7 +28,7 @@ export class UsersService {
                     updatedAt: true,
                 },
             });
-            console.log("Created user:", user);
+            // console.log("Created user:", user);
             return {
                 id: user.id,
                 email: user.email,
@@ -61,6 +61,24 @@ export class UsersService {
         } catch (error) {
             throw new InternalServerErrorException('Failed to fetch users');
         }
+    }
 
+    async findUserByEmail(email: string): Promise<{
+        id: string;
+        email: string;
+        userName: string;
+        phone: string;
+        hashedPassword: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null> {
+        const user = await this.db.user.findUnique({
+            where: {
+                email: email,
+            },
+        })
+        
+        console.log(user);
+        return user;
     }
 }

@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { DatabaseService } from 'src/module/database/database.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { CreateUserRequestBodyDto, UserResponseBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
 

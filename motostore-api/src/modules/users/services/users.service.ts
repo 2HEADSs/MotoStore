@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { CreateUserRequestBodyDto, UserResponseBodyDto } from '../dto/users.dto';
+import { CreateUserRequestBodyDto, User } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class UsersService {
     constructor(private db: DatabaseService) { }
 
 
-    async createUser(data: CreateUserRequestBodyDto): Promise<UserResponseBodyDto> {
+    async createUser(data: CreateUserRequestBodyDto): Promise<User> {
         try {
 
             const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -45,7 +45,7 @@ export class UsersService {
             throw new InternalServerErrorException('Something went wrong while creating user');
         }
     }
-    async getAllUsers(): Promise<UserResponseBodyDto[]> {
+    async getAllUsers(): Promise<User[]> {
         try {
 
             return this.db.user.findMany({
@@ -77,7 +77,7 @@ export class UsersService {
                 email: email,
             },
         })
-        
+
         console.log(user);
         return user;
     }

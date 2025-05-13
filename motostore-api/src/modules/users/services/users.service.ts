@@ -1,7 +1,8 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { CreateUserRequestBodyDto, User } from '../dto/users.dto';
+import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/common/interfaces/user.interface';
 
 @Injectable()
 export class UsersService {

@@ -21,12 +21,5 @@ export class CreateUserRequestBodyDto {
     phone: string;
 }
 
-export class User {
-    id: string;
-    email: string;
-    userName: string;
-    phone: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+
 

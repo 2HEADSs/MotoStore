@@ -36,6 +36,7 @@ export class AuthService {
         // console.log(user, 'AuthService => Login');
 
         return {
+            userPayload,
             access_token: this.jwtService.sign(userPayload),
         };
     }

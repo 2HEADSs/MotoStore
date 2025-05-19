@@ -2,14 +2,14 @@ import { ConflictException, Injectable, InternalServerErrorException } from '@ne
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/common/interfaces/user.interface';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
     constructor(private db: DatabaseService) { }
 
 
-    async createUser(data: CreateUserRequestBodyDto): Promise<User> {
+    async createUser(data: CreateUserRequestBodyDto): Promise<Omit<User, 'hashedPassword'>> {
         try {
 
             const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -46,7 +46,7 @@ export class UsersService {
             throw new InternalServerErrorException('Something went wrong while creating user');
         }
     }
-    async getAllUsers(): Promise<User[]> {
+    async getAllUsers(): Promise<Array<Omit<User, 'hashedPassword'>>> {
         try {
 
             return this.db.user.findMany({
@@ -64,15 +64,7 @@ export class UsersService {
         }
     }
 
-    async findUserByEmail(email: string): Promise<{
-        id: string;
-        email: string;
-        userName: string;
-        phone: string;
-        hashedPassword: string;
-        createdAt: Date;
-        updatedAt: Date;
-    } | null> {
+    async findUserByEmail(email: string): Promise<User | null> {
         const user = await this.db.user.findUnique({
             where: {
                 email: email,

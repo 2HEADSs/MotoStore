@@ -8,26 +8,23 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
-    @Get()
-    async getAllUsers(): Promise<User[]> {
-        return this.usersService.getAllUsers();
-    }
+  @Get()
+  async getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
+  }
 
+  //   @Post()
+  //   async createUser(@Body() data: CreateUserRequestBodyDto): Promise<User> {
+  //       return this.usersService.createUser(data);
+  //   }
 
-    @Post()
-    async createUser(@Body() data: CreateUserRequestBodyDto): Promise<User> {
-        return this.usersService.createUser(data);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    async getProfile(@Req() req): Promise<User | null> {
-        const user = await this.usersService.findUserByEmail(req.user.email);
-        if (!user) return null;
-        return user;
-    }
-
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Req() req): Promise<User | null> {
+    const user = await this.usersService.findUserByEmail(req.user.email);
+    if (!user) return null;
+    return user;
+  }
 }
-

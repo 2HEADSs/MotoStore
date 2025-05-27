@@ -71,9 +71,21 @@ export class UsersService {
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
+    console.log(email, 'findUserByEmail');
     const user = await this.db.user.findUnique({
       where: {
         email: email,
+      },
+    });
+
+    console.log(user);
+    return user;
+  }
+
+  async findUserById(id: string): Promise<User | null> {
+    const user = await this.db.user.findUnique({
+      where: {
+        id: id,
       },
     });
 

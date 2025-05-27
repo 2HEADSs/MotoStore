@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from 'src/common/interfaces/user.interface';
@@ -21,9 +29,18 @@ export class UsersController {
   //   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getProfile(@Req() req): Promise<User | null> {
+  @Get('my-profile')
+  async getMyProfile(@Req() req): Promise<User | null> {
     const user = await this.usersService.findUserByEmail(req.user.email);
+    if (!user) return null;
+    return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user-profile')
+  async getUserProfile(@Query('email') email: string): Promise<User | null> {
+    console.log('Searching for email:', email);
+    const user = await this.usersService.findUserByEmail(email);
     if (!user) return null;
     return user;
   }

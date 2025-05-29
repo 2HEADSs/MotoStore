@@ -10,4 +10,4 @@ import { AuthModule } from '../auth/auth.module';
   imports: [DatabaseModule, forwardRef(() => AuthModule)],
   exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

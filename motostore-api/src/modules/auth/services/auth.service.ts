@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/modules/users/services/users.service';
 import * as bcrypt from 'bcrypt';
@@ -12,30 +16,44 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    // console.log('AuthService => validateUser');
-    const user = await this.usersService.findUserByEmail(email);
-    // console.log(user, 'AuthService => validateUser: Full user object');
-    if (user && (await bcrypt.compare(password, user.hashedPassword))) {
-      const { hashedPassword, ...result } = user;
-      // console.log(result, 'AuthService => validateUser: Result object (returned)');
-      return result;
+    try {
+      // console.log('AuthService => validateUser');
+      const user = await this.usersService.findUserByEmail(email);
+      if (!user) {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+      const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+      if (!passwordMatch) {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+
+      const { hashedPassword, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+      // console.log(user, 'AuthService => validateUser: Full user object');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      console.error('AuthService => validateUser error:', error);
+      throw new InternalServerErrorException('Failed to validate user');
     }
-    return null;
   }
 
   async login(user: User) {
     // console.log(user, 'AuthService => Login');
-    const userPayload = {
-      id: user.id,
-      email: user.email,
-      userName: user.userName,
-      phone: user.phone,
-    };
-    // console.log(user, 'AuthService => Login');
-
-    return {
-      userPayload,
-      access_token: this.jwtService.sign(userPayload),
-    };
+    try {
+      const userPayload = {
+        id: user.id,
+        email: user.email,
+        userName: user.userName,
+        phone: user.phone,
+      };
+      const token = this.jwtService.sign(userPayload);
+      return {
+        userPayload,
+        access_token: token,
+      };
+    } catch (error) {
+      // console.error('AuthService => login error:', error);
+      throw new InternalServerErrorException('Failed to login');
+    }
   }
 }

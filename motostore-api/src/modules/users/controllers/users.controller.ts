@@ -7,11 +7,8 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from 'src/common/interfaces/user.interface';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('users')

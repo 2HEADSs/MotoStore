@@ -17,6 +17,7 @@ const userSelectFields = {
   email: true,
   userName: true,
   phone: true,
+  role: true,
   createdAt: true,
   updatedAt: true,
 };
@@ -38,21 +39,13 @@ export class UsersService {
           userName: data.userName,
           phone: data.phone,
           hashedPassword,
+          role: 'USER',
         },
         select: userSelectFields,
       });
-      // console.log("Created user:", user);
-      // return {
-      //   id: user.id,
-      //   email: user.email,
-      //   userName: user.userName,
-      //   phone: user.phone,
-      //   createdAt: user.createdAt,
-      //   updatedAt: user.updatedAt,
-      // };
       return user;
     } catch (error) {
-      // console.log(error, 'error users.service.ts -create user');
+      console.log(error, 'error users.service.ts -create user');
       if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
         throw new ConflictException('Email already exists');
       }

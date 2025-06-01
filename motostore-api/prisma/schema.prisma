@@ -19,6 +19,7 @@ model User {
   userName       String   @db.VarChar(20)
   phone          String   @unique
   hashedPassword String
+  role           Role     @default(USER)
   ownedBikes     Bike[]   @relation(name: "CreatedByUser")
   likedBikes     Bike[]   @relation(name: "UserToBikeLikes")
   createdAt      DateTime @default(now())
@@ -86,6 +87,11 @@ enum BikeColor {
   MATTE_GRAY
   TWO_TONE
   CUSTOM
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 enum Manufacturer {

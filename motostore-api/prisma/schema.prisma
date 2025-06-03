@@ -38,8 +38,8 @@ model Bike {
   price          Prices[]
   year           Int
   used           Boolean
-  img            String?      @default("")
-  description    String?      @default("")
+  images         String[]     @default([])
+  description    String      @default("")
   ownerId        String
   owner          User         @relation(fields: [ownerId], references: [id], name: "CreatedByUser")
   location       String       @db.VarChar(100)

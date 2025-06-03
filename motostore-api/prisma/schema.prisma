@@ -29,8 +29,8 @@ model User {
 }
 
 model Bike {
-  id             String       @id @default(uuid())
-  model          String       @db.VarChar(20)
+  id             String        @id @default(uuid())
+  model          String        @db.VarChar(20)
   manufacturer   Manufacturer
   color          BikeColor
   engineCapacity Int
@@ -38,15 +38,16 @@ model Bike {
   price          Prices[]
   year           Int
   used           Boolean
-  images         String[]     @default([])
-  description    String      @default("")
+  isForParts     Boolean
+  images         String[]      @default([])
+  description    String        @default("")
   ownerId        String
-  owner          User         @relation(fields: [ownerId], references: [id], name: "CreatedByUser")
-  location       String       @db.VarChar(100)
-  likedByUsers   User[]       @relation(name: "UserToBikeLikes")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  status         BikeStatus   @default(ACTIVE)
+  owner          User          @relation(fields: [ownerId], references: [id], name: "CreatedByUser")
+  location       String        @db.VarChar(100)
+  likedByUsers   User[]        @relation(name: "UserToBikeLikes")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  listingStatus  ListingStatus @default(ACTIVE)
 
   @@map("bikes")
 }
@@ -60,10 +61,11 @@ model Prices {
   updatedAt DateTime @updatedAt
 }
 
-enum BikeStatus {
+enum ListingStatus {
   ACTIVE
   SOLD
   DRAFT
+  UNACTIVE
 }
 
 enum BikeColor {

@@ -2,14 +2,15 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Min,
+  IsBoolean,
+  IsArray,
 } from 'class-validator';
-import { BikeColor, Manufacturer } from '@prisma/client';
+import { BikeColor, Manufacturer, ListingStatus } from '@prisma/client';
 
-export class CreateBikeDto {
+export class CreateBikeRequestBodyDto {
   @IsString()
   @IsNotEmpty()
   model: string;
@@ -32,6 +33,12 @@ export class CreateBikeDto {
   @Min(1900)
   year: number;
 
+  @IsBoolean()
+  used: boolean;
+
+  @IsBoolean()
+  isForParts: boolean;
+
   @IsString()
   location: string;
 
@@ -39,11 +46,16 @@ export class CreateBikeDto {
   @IsOptional()
   description?: string;
 
-  @IsOptional()
+  @IsArray()
   @IsString({ each: true })
+  @IsOptional()
   images?: string[];
 
-  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsEnum(ListingStatus)
+  @IsOptional()
+  listingStatus?: ListingStatus;
+
+  @IsOptional()
   @Min(0)
-  price: number;
+  initialPrice?: number;
 }

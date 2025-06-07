@@ -57,5 +57,5 @@ export class CreateBikeRequestBodyDto {
 
   @IsOptional()
   @Min(0)
-  initialPrice?: number;
+  price?: number;
 }

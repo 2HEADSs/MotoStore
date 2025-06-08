@@ -1,0 +1,119 @@
+[
+    {
+        "model": "CBR600RR",
+        "manufacturer": "Honda",
+        "color": "RED",
+        "engineCapacity": 599,
+        "horsePower": 118,
+        "year": 2018,
+        "used": true,
+        "isForParts": false,
+        "location": "Sofia, Bulgaria",
+        "description": "Добре поддържан мотор, в отлично състояние.",
+        "images": [
+            "https://www.bultraco-sofia.bg/sites/default/files/24ym_cbr600rr_studio_grandprixred_r380_rfq-cutted.png",
+            "https://i0.wp.com/www.asphaltandrubber.com/wp-content/uploads/2020/08/2021-Honda-CBR600RR-11.jpg?fit=1600%2C1067&ssl=1"
+        ],
+        "price": 10500.00
+    },
+    {
+        "model": "GSX-R750",
+        "manufacturer": "Suzuki",
+        "color": "BLACK",
+        "engineCapacity": 750,
+        "horsePower": 148,
+        "year": 2017,
+        "used": true,
+        "isForParts": false,
+        "location": "Plovdiv, Bulgaria",
+        "description": "Много запазен, обслужен преди 1000 км, с нови гуми.",
+        "images": [
+            "https://www.google.com/imgres?q=GSX-R750&imgurl=https%3A%2F%2Fcdpcdn.dx1app.com%2Fproducts%2FUSA%2FSU%2F2025%2FMC%2FSUPERSPORT%2FGSX-R750%2F50%2FSOLID_IRON_GRAY_-_GLASS_SPARKLE_BLACK%2F2000000001.jpg&imgrefurl=https%3A%2F%2Fwww.brennys.com%2FMotorcycles-Suzuki-GSX-R750-2025-Bettendorf-IA-bc4f85e2-ba31-4854-acfa-b18e00518f21&docid=jm8i62nd21sfAM&tbnid=8vAHaHacSqbIoM&vet=12ahUKEwiA7Y2KweKNAxUjS_EDHeiPDSsQM3oECB4QAA..i&w=800&h=471&hcb=2&ved=2ahUKEwiA7Y2KweKNAxUjS_EDHeiPDSsQM3oECB4QAA",
+            "https://cdpcdn.dx1app.com/products/USA/SU/2025/MC/SUPERSPORT/GSX-R750/50/SOLID_IRON_GRAY_-_GLASS_SPARKLE_BLACK/2000000001.jpg"
+        ],
+        "price": 9200.00
+    },
+    {
+        "model": "CB500F",
+        "manufacturer": "Honda",
+        "color": "GOLD",
+        "engineCapacity": 471,
+        "horsePower": 47,
+        "year": 2021,
+        "used": false,
+        "isForParts": false,
+        "location": "Varna, Bulgaria",
+        "description": "Чисто нов мотор, с гаранция от представителството.",
+        "images": [
+            "https://www.bultraco-sofia.bg/sites/default/files/22ym_cb500f_pearl_dusk_yellow_y238_no03-1-e1637249654447.jpg",
+            "https://www.mcnews.com.au/wp-content/uploads/2022/10/Honda-CB500f-RbMotoLens-DSC_8169-.jpg"
+        ],
+        "price": 11800.00
+    },
+    {
+        "model": "YZF-R6",
+        "manufacturer": "Yamaha",
+        "color": "BLACK",
+        "engineCapacity": 599,
+        "horsePower": 120,
+        "year": 2016,
+        "used": true,
+        "isForParts": false,
+        "location": "Burgas, Bulgaria",
+        "description": "Спортен звяр. Леки козметични забележки, технически отличен.",
+        "images": [
+            "https://ml-racing.bg/UserFiles/products/458FEE60-1BB2-4DF1-CEAC-F6744E2E41F5.jpg?cache&q=100&w=1000",
+            "https://www.dianamoto.com/wp-content/uploads/2024/02/Yamaha20YZFR620Race20Tech20Black202022.jpg"
+        ],
+        "price": 8900.00
+    },
+    {
+        "model": "Ninja ZX-6R",
+        "manufacturer": "Kawasaki",
+        "color": "GREEN",
+        "engineCapacity": 636,
+        "horsePower": 130,
+        "year": 2020,
+        "used": false,
+        "isForParts": false,
+        "location": "Stara Zagora, Bulgaria",
+        "description": "Нов модел ZX-6R, готов за писта или улица.",
+        "images": [
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS39JHoltEhNmuryo0ET_3iUIkSAiuTg47Yeb873Db6FqO26tV4bGkb7SDSwXfltp58Zd8&usqp=CAU"
+        ],
+        "price": 13700.00
+    },
+    {
+        "model": "S1000RR",
+        "manufacturer": "BMW",
+        "color": "SILVER",
+        "engineCapacity": 999,
+        "horsePower": 207,
+        "year": 2022,
+        "used": false,
+        "isForParts": false,
+        "location": "Ruse, Bulgaria",
+        "description": "Чудовищна машина с всички екстри, чисто нова.",
+        "images": [
+            "https://s1.cdn.autoevolution.com/images/news/bmw-s1000rr-detailed-3827_1.jpg"
+        ],
+        "price": 28500.00
+    },
+    {
+        "model": "Monster 821",
+        "manufacturer": "Ducati",
+        "color": "YELLOW",
+        "engineCapacity": 821,
+        "horsePower": 109,
+        "year": 2019,
+        "used": true,
+        "isForParts": false,
+        "location": "Veliko Tarnovo, Bulgaria",
+        "description": "Класически Ducati стил, агресивен звук и визия.",
+        "images": [
+            "https://bikereview.com.au/wp-content/uploads/2017/10/2018-Ducati-Monster-821-Bike-Review-83-37-1500x1000.jpg",
+            "https://mcn-images.bauersecure.com/wp-images/4277/1440x960/ducati-monster-821-07.jpg?mode=max&quality=90&scale=down"
+        ],
+        "price": 11700.00
+    }
+]

@@ -54,7 +54,7 @@ model Bike {
 
 model Prices {
   id        String   @id @default(uuid())
-  bike      Bike     @relation(fields: [bikeId], references: [id])
+  bike      Bike     @relation(fields: [bikeId], references: [id], onDelete: Cascade)
   bikeId    String
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())

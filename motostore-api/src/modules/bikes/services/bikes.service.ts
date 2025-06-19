@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBikeRequestBodyDto } from '../dto/bikes.dto';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { Bike } from '@prisma/client';
+import { Bike, ListingStatus } from '@prisma/client';
 
 @Injectable()
 export class BikesService {
@@ -16,7 +16,7 @@ export class BikesService {
     return this.db.bike.create({
       data: {
         ownerId: userId,
-        listingStatus: 'ACTIVE',
+        listingStatus: ListingStatus.ACTIVE,
         ...bikeData,
         ...(price !== undefined && {
           price: {
@@ -25,6 +25,14 @@ export class BikesService {
             },
           },
         }),
+      },
+    });
+  }
+
+  async findAll(): Promise<Bike[]> {
+    return this.db.bike.findMany({
+      where: {
+        listingStatus: ListingStatus.ACTIVE,
       },
     });
   }

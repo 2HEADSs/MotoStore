@@ -115,5 +115,21 @@
             "https://mcn-images.bauersecure.com/wp-images/4277/1440x960/ducati-monster-821-07.jpg?mode=max&quality=90&scale=down"
         ],
         "price": 11700.00
+    },
+    {
+        "model": "GSX-R750",
+        "manufacturer": "Suzuki",
+        "color": "BLACK",
+        "engineCapacity": 750,
+        "horsePower": 148,
+        "year": 2017,
+        "used": true,
+        "isForParts": false,
+        "location": "Plovdiv, Bulgaria",
+        "description": "Много запазен, обслужен преди 1000 км, с нови гуми.",
+        "images": [
+            "https://japan.webike.net/magazine/wp-content/uploads/2023/04/SUZUKI_GSXR750_04-1.jpg"
+        ],
+        "price": 9200.00
     }
 ]

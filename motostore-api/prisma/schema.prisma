@@ -47,7 +47,7 @@ model Bike {
   likedByUsers   User[]        @relation(name: "UserToBikeLikes")
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  listingStatus  ListingStatus @default(ACTIVE)
+  listingStatus  ListingStatus @default(PENDING_APPROVAL)
 
   @@map("bikes")
 }
@@ -62,6 +62,7 @@ model Prices {
 }
 
 enum ListingStatus {
+  PENDING_APPROVAL
   ACTIVE
   SOLD
   DRAFT

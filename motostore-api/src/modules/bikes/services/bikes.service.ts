@@ -16,7 +16,6 @@ export class BikesService {
     return this.db.bike.create({
       data: {
         ownerId: userId,
-        listingStatus: ListingStatus.ACTIVE,
         ...bikeData,
         ...(price !== undefined && {
           price: {

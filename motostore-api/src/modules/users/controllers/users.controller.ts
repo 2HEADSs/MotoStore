@@ -12,10 +12,6 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  //   @Post()
-  //   async createUser(@Body() data: CreateUserRequestBodyDto): Promise<User> {
-  //       return this.usersService.createUser(data);
-  //   }
 
   @UseGuards(JwtAuthGuard)
   @Get('my-profile')

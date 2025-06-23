@@ -20,6 +20,7 @@ model User {
   phone          String   @unique
   hashedPassword String
   role           Role     @default(USER)
+  isBlocked      Boolean  @default(false)
   ownedBikes     Bike[]   @relation(name: "CreatedByUser")
   likedBikes     Bike[]   @relation(name: "UserToBikeLikes")
   createdAt      DateTime @default(now())

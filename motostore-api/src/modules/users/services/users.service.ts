@@ -16,6 +16,7 @@ const userSelectFields = {
   id: true,
   email: true,
   userName: true,
+  isBlocked: true,
   phone: true,
   role: true,
   createdAt: true,

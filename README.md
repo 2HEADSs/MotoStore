@@ -12,19 +12,19 @@
 ```bash
 MotoStore/
 │
-├── motostore-api/           # NestJS application
+├── motostore-api/           
 │   ├── src/
-│   │   ├── modules/         # Modules like auth, bikes, users, etc.
-│   │   ├── common/          # Decorators, guards, and shared resources
-│   │   └── prisma/          # Prisma schema and service
+│   │   ├── modules/         
+│   │   ├── common/          
+│   │   └── prisma/         
 │   ├── prisma/
-│   │   └── schema.prisma    # Prisma schema file
+│   │   └── schema.prisma    
 │   └── package.json
 │
-├── motostore-client/        # React application (created with Vite)
+├── motostore-client/       
 │   └── (work in progress)
 │
-└── README.md                # Project documentation
+└── README.md                
 ```
 
 ---
@@ -41,7 +41,7 @@ npm install
 ```
 
 #### Create a .env file:
-Създай файл `.env` с променливата:
+Create `.env` file with variable:
 
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/motostore"

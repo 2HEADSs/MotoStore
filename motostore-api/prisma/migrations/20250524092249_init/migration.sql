@@ -11,7 +11,7 @@ CREATE TYPE "Manufacturer" AS ENUM ('Access Motor', 'Adly', 'Aeon', 'AGM MOTORS'
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "userName" VARCHAR(20) NOT NULL,
+    "username" VARCHAR(20) NOT NULL,
     "phone" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

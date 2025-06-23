@@ -15,7 +15,7 @@ type SafeUser = Omit<User, 'hashedPassword'>;
 const userSelectFields = {
   id: true,
   email: true,
-  userName: true,
+  username: true,
   isBlocked: true,
   phone: true,
   role: true,
@@ -37,7 +37,7 @@ export class UsersService {
       const user = await this.db.user.create({
         data: {
           email: data.email,
-          userName: data.userName,
+          username: data.username,
           phone: data.phone,
           hashedPassword,
           role: 'USER',

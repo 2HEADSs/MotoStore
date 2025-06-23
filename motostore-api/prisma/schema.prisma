@@ -16,7 +16,7 @@ datasource db {
 model User {
   id             String   @id @default(uuid())
   email          String   @unique
-  userName       String   @db.VarChar(20)
+  username       String   @db.VarChar(20)
   phone          String   @unique
   hashedPassword String
   role           Role     @default(USER)

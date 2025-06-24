@@ -13,7 +13,7 @@ export class BikesController {
   @Post('create')
   create(
     @Body() createBikeRequestBodyDto: CreateBikeRequestBodyDto,
-    @CurrentUser() user: { id: string; email: string },
+    @CurrentUser() user: { id: string; email: string; role: string },
   ) {
     return this.bikesService.createBike(user.id, createBikeRequestBodyDto);
   }

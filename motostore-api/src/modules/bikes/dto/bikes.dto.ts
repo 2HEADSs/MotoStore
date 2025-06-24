@@ -17,7 +17,7 @@ export class CreateBikeRequestBodyDto {
   @IsNotEmpty()
   model: string;
 
-  @ApiProperty({ enum: Manufacturer })
+  @ApiProperty({ enum: Manufacturer, example: Manufacturer.Honda })
   @IsEnum(Manufacturer)
   manufacturer: Manufacturer;
 

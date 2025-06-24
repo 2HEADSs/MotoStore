@@ -22,4 +22,12 @@ export class BikesController {
   getAll() {
     return this.bikesService.findAll();
   }
+
+  @Get('findMyBikes')
+  @UseGuards(JwtAuthGuard)
+  findMyBikes(
+    @CurrentUser() user: { id: string; email: string; role: string },
+  ) {
+    return this.bikesService.findMyBikes(user.id);
+  }
 }

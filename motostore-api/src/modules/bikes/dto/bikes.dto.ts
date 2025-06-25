@@ -76,3 +76,15 @@ export class CreateBikeRequestBodyDto {
   @Min(0)
   price?: number;
 }
+
+export class BikeStatusFilterDto {
+  @ApiPropertyOptional({
+    enum: ListingStatus,
+    description:
+      'Filter bikes by listing status (e.g. ACTIVE, PENDING_APPROVAL, etc.)',
+    example: ListingStatus.ACTIVE,
+  })
+  @IsOptional()
+  @IsEnum(ListingStatus, { message: 'Invalid listing status' })
+  status?: ListingStatus;
+}

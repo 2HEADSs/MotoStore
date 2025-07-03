@@ -92,7 +92,7 @@ npm run dev
   - `USER`
   - `ADMIN`
 
-- ОMain entities:
+- Main entities:
   - `User`
   - `Bike`
   - `Prices`

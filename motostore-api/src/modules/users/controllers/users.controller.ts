@@ -12,20 +12,10 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-
   @UseGuards(JwtAuthGuard)
   @Get('my-profile')
   async getMyProfile(@Req() req): Promise<User | null> {
     const user = await this.usersService.getUserByEmail(req.user.email);
-    if (!user) return null;
-    return user;
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('user-profile')
-  async getUserProfile(@Query('email') email: string): Promise<User | null> {
-    console.log('Searching for email:', email);
-    const user = await this.usersService.getUserByEmail(email);
     if (!user) return null;
     return user;
   }

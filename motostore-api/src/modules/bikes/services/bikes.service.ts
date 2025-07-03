@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateBikeRequestBodyDto } from '../dto/bikes.dto';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { Bike, ListingStatus } from '@prisma/client';
-import { stat } from 'fs';
 
 @Injectable()
 export class BikesService {

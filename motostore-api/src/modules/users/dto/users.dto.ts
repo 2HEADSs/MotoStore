@@ -1,11 +1,16 @@
 import {
+  IsBooleanString,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Length,
   Matches,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class CreateUserRequestBodyDto {
   @ApiProperty({
@@ -49,4 +54,23 @@ export class CreateUserRequestBodyDto {
     message: 'Phone number must be in international format, e.g. +359881234567',
   })
   phone: string;
+}
+
+export class UserFilterDto {
+  @ApiPropertyOptional({
+    enum: Role,
+    description: 'Filter users by role (ADMIN or USER)',
+  })
+  @IsOptional()
+  @IsEnum(Role, { message: 'Invalid role' })
+  role?: Role;
+
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Filter users by blocked status (true or false)',
+    example: false,
+  })
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  isBlocked?: boolean;
 }

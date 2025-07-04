@@ -1,5 +1,5 @@
 import {
-  IsBooleanString,
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -73,4 +73,13 @@ export class UserFilterDto {
   @IsOptional()
   @Transform(({ value }) => value === 'true')
   isBlocked?: boolean;
+}
+export class ChangeUserStatusDto {
+  @ApiProperty({
+    type: Boolean,
+    description: 'Change user status (true or false)',
+    example: false,
+  })
+  @IsBoolean()
+  isBlocked: boolean;
 }

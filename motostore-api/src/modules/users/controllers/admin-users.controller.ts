@@ -13,8 +13,10 @@ import { AdminUsersService } from '../services/admin-users.service';
 import { ChangeUserStatusDto, UserFilterDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from '@prisma/client';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('admin/users')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminUsersController {
   constructor(

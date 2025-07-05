@@ -56,15 +56,15 @@ export class UsersService {
       );
     }
   }
-  async getAllUsers(): Promise<SafeUser[]> {
-    try {
-      return this.db.user.findMany({
-        select: userSelectFields,
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to fetch users');
-    }
-  }
+  // async getAllUsers(): Promise<SafeUser[]> {
+  //   try {
+  //     return this.db.user.findMany({
+  //       select: userSelectFields,
+  //     });
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Failed to fetch users');
+  //   }
+  // }
 
   async getUserByEmail(email: string): Promise<User> {
     try {

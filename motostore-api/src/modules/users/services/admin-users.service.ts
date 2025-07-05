@@ -22,7 +22,7 @@ export class AdminUsersService {
       if (filter?.isBlocked !== undefined) {
         where.isBlocked = filter.isBlocked;
       }
-      console.log(where);
+      // console.log(where);
 
       return await this.db.user.findMany({ where });
     } catch (error) {

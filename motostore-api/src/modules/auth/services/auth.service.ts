@@ -26,7 +26,9 @@ export class AuthService {
       if (!passwordMatch) {
         throw new UnauthorizedException('Invalid email or password');
       }
-
+      if (user.isBlocked) {
+        throw new UnauthorizedException('Account is blocked');
+      }
       const { hashedPassword, ...userWithoutPassword } = user;
       return userWithoutPassword;
       // console.log(user, 'AuthService => validateUser: Full user object');

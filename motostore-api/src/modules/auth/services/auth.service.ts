@@ -15,7 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
+  async validateUser(email: string, password: string): Promise<User> {
     try {
       // console.log('AuthService => validateUser');
       const user = await this.usersService.getUserByEmail(email);

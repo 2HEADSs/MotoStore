@@ -7,6 +7,7 @@ import {
   Min,
   IsBoolean,
   IsArray,
+  IsIn,
 } from 'class-validator';
 import { BikeColor, Manufacturer, ListingStatus } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -77,12 +78,22 @@ export class CreateBikeRequestBodyDto {
   price?: number;
 }
 
+const ALLOWED_STATUSES = [ListingStatus.ACTIVE, ListingStatus.SOLD] as const;
+type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 export class BikeStatusFilterDto {
   @ApiPropertyOptional({
+    enum: ALLOWED_STATUSES,
+    description: 'Optional status filter',
+  })
+  @IsOptional()
+  @IsIn(ALLOWED_STATUSES, { message: 'Invalid listing status' })
+  status?: AllowedStatus;
+}
+
+export class MyBikesStatusFilterDto {
+  @ApiPropertyOptional({
     enum: ListingStatus,
-    description:
-      'Filter bikes by listing status (e.g. ACTIVE, PENDING_APPROVAL, etc.)',
-    example: ListingStatus.ACTIVE,
+    description: 'Optional status filter',
   })
   @IsOptional()
   @IsEnum(ListingStatus, { message: 'Invalid listing status' })

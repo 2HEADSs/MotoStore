@@ -33,13 +33,6 @@ export class BikesService {
   }
 
   async findAll(status?: ListingStatus): Promise<Bike[]> {
-    const allowedStatuses: ListingStatus[] = [
-      ListingStatus.ACTIVE,
-      ListingStatus.SOLD,
-    ];
-    if (status && !allowedStatuses.includes(status)) {
-      return [];
-    }
     try {
       return await this.db.bike.findMany({
         where: status

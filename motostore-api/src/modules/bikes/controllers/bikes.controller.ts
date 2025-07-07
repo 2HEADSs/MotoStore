@@ -2,16 +2,18 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import {
   BikeStatusFilterDto,
   CreateBikeRequestBodyDto,
+  MyBikesStatusFilterDto,
 } from '../dto/bikes.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { ListingStatus } from '@prisma/client';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('bikes')
 export class BikesController {
   constructor(private readonly bikesService: BikesService) {}
 
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Post('create')
   create(
@@ -23,15 +25,17 @@ export class BikesController {
 
   @Get('all')
   getAll(@Query() filter: BikeStatusFilterDto) {
+    console.log(filter.status);
     return this.bikesService.findAll(filter.status);
   }
 
-  @Get('findMyBikes')
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
+  @Get('findMyBikes')
   findMyBikes(
     @CurrentUser() user: { id: string; email: string; role: string },
-    @Query('status') status?: ListingStatus,
+    @Query() filter: MyBikesStatusFilterDto,
   ) {
-    return this.bikesService.findMyBikes(user.id, status);
+    return this.bikesService.findMyBikes(user.id, filter.status);
   }
 }

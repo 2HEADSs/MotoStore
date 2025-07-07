@@ -3,6 +3,8 @@ import { AuthService } from '../services/auth.service';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { CreateUserRequestBodyDto } from 'src/modules/users/dto/users.dto';
 import { UsersService } from 'src/modules/users/services/users.service';
+import { ApiBody } from '@nestjs/swagger';
+import { LoginDto } from '../dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,10 +13,13 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
-    // console.log(req.user,'auth.controller');
+  @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: LoginDto }) 
+  async login(
+    @Body() _: LoginDto, 
+    @Request() req, 
+  ) {
     return this.authService.login(req.user);
   }
 

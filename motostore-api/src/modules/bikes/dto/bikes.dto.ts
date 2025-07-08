@@ -83,7 +83,7 @@ type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 export class BikeStatusFilterDto {
   @ApiPropertyOptional({
     enum: ALLOWED_STATUSES,
-    description: 'Optional status filter',
+    description: 'Optional status filter return active by default',
   })
   @IsOptional()
   @IsIn(ALLOWED_STATUSES, { message: 'Invalid listing status' })

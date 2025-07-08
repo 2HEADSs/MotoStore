@@ -25,7 +25,6 @@ export class BikesController {
 
   @Get('all')
   getAll(@Query() filter: BikeStatusFilterDto) {
-    console.log(filter.status);
     return this.bikesService.findAll(filter.status);
   }
 

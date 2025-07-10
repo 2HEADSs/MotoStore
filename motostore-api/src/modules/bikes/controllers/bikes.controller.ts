@@ -1,13 +1,10 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import {
-  BikeStatusFilterDto,
-  CreateBikeRequestBodyDto,
-  MyBikesStatusFilterDto,
-} from '../dto/bikes.dto';
+import { BikeStatusFilterDto, MyBikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 
 @Controller('bikes')
 export class BikesController {

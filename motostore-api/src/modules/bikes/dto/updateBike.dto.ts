@@ -16,52 +16,69 @@ import {
 
 export enum OwnerListingStatus {
   DRAFT = 'DRAFT',
-  SOLD = 'SOLD',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  ACTIVE = 'ACTIVE',
 }
 
 export class UpdateBikeDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 'Xtreme Enduro 300' })
   @IsOptional()
   @IsString()
   model?: string;
 
-  @ApiPropertyOptional({ enum: Manufacturer })
+  @ApiPropertyOptional({ enum: Manufacturer, example: Manufacturer.KTM })
   @IsOptional()
   @IsEnum(Manufacturer)
   manufacturer?: Manufacturer;
 
-  @ApiPropertyOptional({ enum: BikeColor })
+  @ApiPropertyOptional({ enum: BikeColor, example: BikeColor.BLACK })
   @IsOptional()
   @IsEnum(BikeColor)
   color?: BikeColor;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 300 })
   @IsOptional()
   @IsInt()
   @Min(50)
   @Max(10000)
   engineCapacity?: number;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 42 })
   @IsOptional()
   @IsInt()
   @Min(1)
   @Max(1000)
   horsePower?: number;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 2023 })
   @IsOptional()
   @IsInt()
   @Min(1900)
   @Max(new Date().getFullYear() + 1)
   year?: number;
 
-  @ApiPropertyOptional() @IsOptional() @IsBoolean() used?: boolean;
-  @ApiPropertyOptional() @IsOptional() @IsBoolean() isForParts?: boolean;
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  used?: boolean;
 
-  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() location?: string;
+  @ApiPropertyOptional({ example: false })
+  @IsOptional()
+  @IsBoolean()
+  isForParts?: boolean;
 
+  @ApiPropertyOptional({
+    example: 'Fully serviced, ready to ride.',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional({ example: 'Sofia, Bulgaria' })
+  @IsOptional()
+  @IsString()
+  location?: string;
+  /* ── снимки ─────────────────────────────────── */
   @ApiPropertyOptional({
     type: [String],
     maxItems: 10,
@@ -74,7 +91,7 @@ export class UpdateBikeDto {
   @IsOptional()
   @IsArray()
   @ArrayMaxSize(10)
-  @IsUrl({}, { each: true, message: 'Each image must be a valid URL' })
+  @IsUrl({}, { each: true })
   images?: string[];
 
   @ApiPropertyOptional({ example: 5500.0 })
@@ -82,8 +99,13 @@ export class UpdateBikeDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   price?: number;
 
-  @ApiPropertyOptional({ enum: OwnerListingStatus })
+  @ApiPropertyOptional({
+    enum: OwnerListingStatus,
+    example: OwnerListingStatus.DRAFT,
+  })
   @IsOptional()
-  @IsEnum(OwnerListingStatus, { message: 'Status must be DRAFT or SOLD' })
+  @IsEnum(OwnerListingStatus, {
+    message: 'Status must be DRAFT or PENDING_APPROVAL',
+  })
   listingStatus?: OwnerListingStatus;
 }

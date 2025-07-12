@@ -32,7 +32,22 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      // Подреждаме секциите точно както искаме
+      tagsSorter: (a: string, b: string) => {
+        const order = [
+          'App',
+          'Auth',
+          'Bikes',
+          'Users',
+          'AdminUsers',
+          'AdminBikes',
+        ];
+        return order.indexOf(a) - order.indexOf(b);
+      },
+    },
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

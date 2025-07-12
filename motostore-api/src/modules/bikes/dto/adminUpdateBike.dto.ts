@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BikeColor, Manufacturer } from '@prisma/client';
+import { BikeColor, ListingStatus, Manufacturer } from '@prisma/client';
 import {
   ArrayMaxSize,
   IsArray,
@@ -14,13 +14,7 @@ import {
   Min,
 } from 'class-validator';
 
-export enum OwnerListingStatus {
-  DRAFT = 'DRAFT',
-  PENDING_APPROVAL = 'PENDING_APPROVAL',
-  ACTIVE = 'ACTIVE',
-}
-
-export class UpdateBikeDto {
+export class AdminUpdateBikeDto {
   @ApiPropertyOptional({ example: 'Xtreme Enduro 300' })
   @IsOptional()
   @IsString()
@@ -67,9 +61,7 @@ export class UpdateBikeDto {
   @IsBoolean()
   isForParts?: boolean;
 
-  @ApiPropertyOptional({
-    example: 'Fully serviced, ready to ride.',
-  })
+  @ApiPropertyOptional({ example: 'Excellent condition' })
   @IsOptional()
   @IsString()
   description?: string;
@@ -78,7 +70,6 @@ export class UpdateBikeDto {
   @IsOptional()
   @IsString()
   location?: string;
-
 
   @ApiPropertyOptional({
     type: [String],
@@ -95,18 +86,18 @@ export class UpdateBikeDto {
   @IsUrl({}, { each: true })
   images?: string[];
 
-  @ApiPropertyOptional({ example: 5500.0 })
+  @ApiPropertyOptional({ example: 7200 })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   price?: number;
 
-  @ApiPropertyOptional({
-    enum: OwnerListingStatus,
-    example: OwnerListingStatus.DRAFT,
-  })
+  @ApiPropertyOptional({ enum: ListingStatus })
   @IsOptional()
-  @IsEnum(OwnerListingStatus, {
-    message: 'Status must be DRAFT or PENDING_APPROVAL',
-  })
-  listingStatus?: OwnerListingStatus;
+  @IsEnum(ListingStatus)
+  listingStatus?: ListingStatus;
+
+  @ApiPropertyOptional({ example: 'uuid-of-new-owner' })
+  @IsOptional()
+  @IsString()
+  ownerId?: string;
 }

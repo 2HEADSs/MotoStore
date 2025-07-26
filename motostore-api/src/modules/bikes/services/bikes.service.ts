@@ -7,10 +7,14 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { Bike, ListingStatus } from '@prisma/client';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
+import { BikeRepository } from '../repositories/bike.repository';
 
 @Injectable()
 export class BikesService {
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private readonly bikeRepo: BikeRepository,
+  ) {}
 
   async createBike(
     userId: string,
@@ -78,7 +82,7 @@ export class BikesService {
     ownerId: string,
     bikeId: string,
     data: UpdateBikeDto,
-  ): Promise<Bike> {
+  ): Promise<Bike | null> {
     const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
     if (!bike || bike.ownerId !== ownerId) {
       throw new ForbiddenException('You are not allowed to update this bike');
@@ -100,7 +104,7 @@ export class BikesService {
     }
     try {
       return await this.db.$transaction(async (tx) => {
-        const updatedBike = await tx.bike.update({
+        await tx.bike.update({
           where: { id: bikeId },
           data: bikeData,
         });
@@ -110,7 +114,8 @@ export class BikesService {
             data: { bikeId, price },
           });
         }
-        return updatedBike;
+        // console.log(updatedBike);
+        return this.bikeRepo.findByIdWithLatestPrice(bikeId, tx);
       });
     } catch (error) {
       console.log('Error updating bike:', error);

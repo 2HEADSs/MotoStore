@@ -2,10 +2,14 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { Bike } from '@prisma/client';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
+import { BikeRepository } from '../repositories/bike.repository';
 
 @Injectable()
 export class AdminBikesService {
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private readonly bikeRepo: BikeRepository,
+  ) {}
 
   async findAll(): Promise<Bike[]> {
     try {
@@ -16,12 +20,15 @@ export class AdminBikesService {
     }
   }
 
-  async updateBike(bikeId: string, dto: AdminUpdateBikeDto): Promise<Bike> {
+  async updateBike(
+    bikeId: string,
+    dto: AdminUpdateBikeDto,
+  ): Promise<Bike | null> {
     const { price, ...bikeData } = dto;
 
     try {
-      return await this.db.$transaction(async (tx) => {
-        const updatedBike = await tx.bike.update({
+      return this.db.$transaction(async (tx) => {
+        await tx.bike.update({
           where: { id: bikeId },
           data: bikeData,
         });
@@ -33,7 +40,7 @@ export class AdminBikesService {
             },
           });
         }
-        return updatedBike;
+        return this.bikeRepo.findByIdWithLatestPrice(bikeId, tx);
       });
     } catch (error) {
       console.error('Error updating bike in admin service:', error);

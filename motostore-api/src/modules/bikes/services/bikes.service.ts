@@ -8,6 +8,7 @@ import { Bike, ListingStatus } from '@prisma/client';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class BikesService {
@@ -62,7 +63,7 @@ export class BikesService {
             listingStatus: status,
           }
         : { ownerId: userId };
-      return await this.db.bike.findMany({
+      const bikes = await this.db.bike.findMany({
         where,
         include: {
           price: {
@@ -72,6 +73,13 @@ export class BikesService {
           },
         },
       });
+      return bikes.map((b) => ({
+        ...b,
+        price: b.price.map((p) => ({
+          price: (p.price as Decimal).toNumber(),
+          createdAt: p.createdAt,
+        })),
+      }));
     } catch (error) {
       console.error('Error fetching user bikes:', error);
       throw new InternalServerErrorException('Failed to fetch bikes');

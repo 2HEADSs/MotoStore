@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { Bike, ListingStatus } from '@prisma/client';
@@ -129,5 +130,26 @@ export class BikesService {
       console.log('Error updating bike:', error);
       throw new InternalServerErrorException('Failed to update bike');
     }
+  }
+
+  async getOneBike(bikeId: string, userId: string | null): Promise<Bike> {
+    const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
+
+    if (!bike) {
+      throw new NotFoundException('Bike not found');
+    }
+
+    const isOwner = bike.ownerId === userId;
+    const isPublic =
+      bike.listingStatus === ListingStatus.ACTIVE ||
+      bike.listingStatus === ListingStatus.SOLD;
+    if (!isOwner && !isPublic) {
+      throw new ForbiddenException({
+        message: 'You are not allowed to view this bike',
+        status: 403,
+      });
+    }
+
+    return bike;
   }
 }

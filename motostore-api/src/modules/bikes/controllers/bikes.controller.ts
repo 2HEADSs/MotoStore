@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -18,6 +19,10 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { UpdateBikeDto } from '../dto/updateBike.dto';
+import {
+  JwtUser,
+  OptionalJwtGuard,
+} from 'src/modules/auth/guards/optional-jwt/optional-jwt.guard';
 
 @ApiTags('Bikes')
 @Controller('bikes')
@@ -62,5 +67,13 @@ export class BikesController {
     @CurrentUser() user: { id: string },
   ) {
     return this.bikesService.updateMyBike(user.id, bikeId, updateBikeDto);
+  }
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(OptionalJwtGuard)
+  @Get(':id')
+  @ApiOperation({ summary: 'Show single bike' })
+  getOneBike(@Param('id') bikeId: string, @CurrentUser() user: JwtUser) {
+    return this.bikesService.getOneBike(bikeId, user.id);
   }
 }

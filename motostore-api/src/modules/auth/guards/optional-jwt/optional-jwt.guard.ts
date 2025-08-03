@@ -13,13 +13,9 @@ export class OptionalJwtGuard extends JwtAuthGuard {
     const req = context.switchToHttp().getRequest();
     try {
       await super.canActivate(context);
-      console.log(req.user);
-      console.log("canactive");
       return true;
     } catch (error) {}
     if (!req.user) {
-      console.log("null");
-
       req.user = { id: null, email: null, role: 'GUEST' };
     }
     return true;

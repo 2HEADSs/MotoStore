@@ -132,8 +132,20 @@ export class BikesService {
     }
   }
 
-  async getOneBike(bikeId: string, userId: string | null): Promise<Bike> {
-    const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
+  async getOneBike(
+    bikeId: string,
+    userId: string | null,
+  ): Promise<Bike & { latestPrice: number | null }> {
+    const bike = await this.db.bike.findUnique({
+      where: { id: bikeId },
+      include: {
+        price: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { price: true },
+        },
+      },
+    });
 
     if (!bike) {
       throw new NotFoundException('Bike not found');
@@ -150,6 +162,12 @@ export class BikesService {
       });
     }
 
-    return bike;
+    return {
+      ...bike,
+      latestPrice:
+        bike.price.length > 0
+          ? (bike.price[0].price as Decimal).toNumber()
+          : null,
+    };
   }
 }

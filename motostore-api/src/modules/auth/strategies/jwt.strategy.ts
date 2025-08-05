@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user || user.isBlocked) {
       throw new ForbiddenException('Account is disabled');
     }
-    // console.log("Paylod:", payload);
     return {
       id: payload.id,
       email: payload.email,

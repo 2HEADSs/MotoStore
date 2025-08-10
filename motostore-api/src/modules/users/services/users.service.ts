@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -25,7 +24,6 @@ const userSelectFields = {
 
 @Injectable()
 export class UsersService {
-  // private readonly logger = new Logger(UsersService.name);
   constructor(private db: DatabaseService) {}
 
   async createUser(data: CreateUserRequestBodyDto): Promise<SafeUser> {
@@ -56,29 +54,16 @@ export class UsersService {
       );
     }
   }
-  // async getAllUsers(): Promise<SafeUser[]> {
-  //   try {
-  //     return this.db.user.findMany({
-  //       select: userSelectFields,
-  //     });
-  //   } catch (error) {
-  //     throw new InternalServerErrorException('Failed to fetch users');
-  //   }
-  // }
 
   async getUserByEmail(email: string): Promise<User> {
-    try {
-      const user = await this.db.user.findUnique({
-        where: { email },
-      });
+    const user = await this.db.user.findUnique({
+      where: { email },
+    });
 
-      if (!user) {
-        throw new NotFoundException(`User with email ${email} not found`);
-      }
-      return user;
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to validate user');
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
     }
+    return user;
   }
 
   async getUserById(id: string): Promise<User | null> {
@@ -89,7 +74,7 @@ export class UsersService {
         },
       });
       if (!user) {
-        throw new NotFoundException(`User with email ${id} not found`);
+        throw new NotFoundException(`User with id ${id} not found`);
       }
       return user;
     } catch (error) {}

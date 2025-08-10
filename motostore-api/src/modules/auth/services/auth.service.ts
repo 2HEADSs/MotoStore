@@ -1,6 +1,8 @@
 import {
+  HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -17,13 +19,11 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User> {
     try {
-      // console.log('AuthService => validateUser');
+      console.log('AuthService => validateUser');
       const user = await this.usersService.getUserByEmail(email);
-      if (!user) {
-        throw new UnauthorizedException('Invalid email or password');
-      }
       const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
       if (!passwordMatch) {
+        console.log('passwordMatch');
         throw new UnauthorizedException('Invalid email or password');
       }
       if (user.isBlocked) {
@@ -34,13 +34,18 @@ export class AuthService {
       // console.log(user, 'AuthService => validateUser: Full user object');
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
-      console.error('AuthService => validateUser error:', error);
-      throw new InternalServerErrorException('Failed to validate user');
+      if (error instanceof NotFoundException)
+        throw new UnauthorizedException('Invalid email or password');
+      // console.error('AuthService => validateUser error:', error);
+      throw new InternalServerErrorException(
+        'Failed to validate user. Please try again.',
+      );
+      // return error.message;
     }
   }
 
   async login(user: User) {
-    // console.log(user, 'AuthService => Login');
+    console.log(user, 'AuthService => Login');
     try {
       const userPayload = {
         id: user.id,
@@ -55,6 +60,7 @@ export class AuthService {
         access_token: token,
       };
     } catch (error) {
+      if (error instanceof HttpException) throw error;
       // console.error('AuthService => login error:', error);
       throw new InternalServerErrorException('Failed to login');
     }

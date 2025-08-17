@@ -43,17 +43,11 @@ export class BikesService {
     }
   }
 
-  async findAll(status?: ListingStatus): Promise<Bike[]> {
-    try {
-      return await this.db.bike.findMany({
-        where: status
-          ? { listingStatus: status }
-          : { listingStatus: ListingStatus.ACTIVE },
-      });
-    } catch (error) {
-      console.error('Error fetching bikes:', error);
-      throw new InternalServerErrorException('Failed to fetch bikes');
-    }
+  async findAllByStatus(status: ListingStatus): Promise<Bike[]> {
+    return await this.db.bike.findMany({
+      where: { listingStatus: status },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findMyBikes(userId: string, status?: ListingStatus): Promise<Bike[]> {

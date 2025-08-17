@@ -9,10 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  BikeStatusFilterDto,
-  MyBikesStatusFilterDto,
-} from '../dto/bikesStatusFileter.dto';
+import { MyBikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
@@ -23,16 +20,23 @@ import {
   JwtUser,
   OptionalJwtGuard,
 } from 'src/modules/auth/guards/optional-jwt/optional-jwt.guard';
+import { ListingStatus } from '@prisma/client';
 
 @ApiTags('Bikes')
 @Controller('bikes')
 export class BikesController {
   constructor(private readonly bikesService: BikesService) {}
 
-  @Get('all')
+  @Get('bikes/active')
   @ApiOperation({ summary: 'List all active/sold bikes' })
-  getAll(@Query() filter: BikeStatusFilterDto) {
-    return this.bikesService.findAll(filter.status);
+  getAllActive() {
+    return this.bikesService.findAllByStatus(ListingStatus.ACTIVE);
+  }
+
+  @Get('bikes/sold')
+  @ApiOperation({ summary: 'List all active/sold bikes' })
+  getAllSold() {
+    return this.bikesService.findAllByStatus(ListingStatus.SOLD);
   }
 
   @ApiBearerAuth('access-token')

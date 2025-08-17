@@ -23,7 +23,7 @@ export class CreateUserRequestBodyDto {
   email: string;
 
   @ApiProperty({
-    example: 'P@ssword123',
+    example: 'StrongPassword123!',
     minLength: 8,
     maxLength: 100,
     description: 'Password with a length between 8 and 100 characters.',

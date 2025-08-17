@@ -1,6 +1,16 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { BikeColor, ListingStatus, Manufacturer } from "@prisma/client";
-import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { BikeColor, ListingStatus, Manufacturer } from '@prisma/client';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateBikeRequestBodyDto {
   @ApiProperty({ example: 'CBR600RR' })
@@ -18,17 +28,18 @@ export class CreateBikeRequestBodyDto {
 
   @ApiProperty({ example: 600, minimum: 50 })
   @IsInt()
-  @Min(50)
+  @Min(50, { message: 'Minimum engine capacity is 50cc' })
   engineCapacity: number;
 
   @ApiProperty({ example: 120, minimum: 1 })
   @IsInt()
-  @Min(1)
+  @Min(1, { message: 'Minimum horsepower is 1' })
   horsePower: number;
 
   @ApiProperty({ example: 2020, minimum: 1900 })
   @IsInt()
-  @Min(1900)
+  @Min(1900, { message: 'Year cannot be before 1900' })
+  @Max(new Date().getFullYear(), { message: 'Year cannot be in the future' })
   year: number;
 
   @ApiProperty({ example: true })
@@ -64,6 +75,6 @@ export class CreateBikeRequestBodyDto {
 
   @ApiPropertyOptional({ example: 4500, minimum: 0 })
   @IsOptional()
-  @Min(0)
+  @Min(0, { message: 'Minimum price is 0' })
   price?: number;
 }

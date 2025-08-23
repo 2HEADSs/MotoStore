@@ -64,9 +64,7 @@ export class AdminBikesService {
     }
   }
 
-  async getOneBike(
-    bikeId: string,
-  ): Promise<Bike & { latestPrice: number | null }> {
+  async getOneBike(bikeId: string): Promise<Bike> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: {
@@ -80,19 +78,17 @@ export class AdminBikesService {
     if (!bike) {
       throw new NotFoundException('Bike not found');
     }
-    return {
-      ...bike,
-      latestPrice:
-        bike.price.length > 0
-          ? (bike.price[0].price as Decimal).toNumber()
-          : null,
-    };
+    // return {
+    //   ...bike,
+    //   latestPrice:
+    //     bike.price.length > 0
+    //       ? (bike.price[0].price as Decimal).toNumber()
+    //       : null,
+    // };
+    return bike;
   }
 
-  async updateBikeStatus(
-    bikeId: string,
-    status: ListingStatus,
-  ): Promise<Bike & { latestPrice: number | null }> {
+  async updateBikeStatus(bikeId: string, status: ListingStatus): Promise<Bike> {
     try {
       await this.db.bike.update({
         where: { id: bikeId },

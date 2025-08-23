@@ -6,30 +6,31 @@ type LatestPrice = {
   price: number;
   createdAt: Date;
 };
-export type BikeWithLatestPrice = Bike & { price: LatestPrice[] };
+// export type BikeWithLatestPrice = Bike & { price: LatestPrice[] };
 
 export class BikeRepository {
   constructor(private readonly prisma: DatabaseService) {}
   async findByIdWithLatestPrice(
     id: string,
     tx: Prisma.TransactionClient | PrismaClient = this.prisma,
-  ): Promise<BikeWithLatestPrice | null> {
+  ): Promise<Bike | null> {
     const bike = await tx.bike.findUnique({
       where: { id },
       include: {
         price: {
           orderBy: { createdAt: 'desc' },
           take: 1,
-        },
+          select: { price: true },        },
       },
     });
     if (!bike) return null;
-    return {
-      ...bike,
-      price: bike.price.map((p) => ({
-        ...p,
-        price: (p.price as Decimal).toNumber(),
-      })),
-    } as BikeWithLatestPrice;
+    return bike;
+    // return {
+    //   ...bike,
+    //   price: bike.price.map((p) => ({
+    //     ...p,
+    //     price: (p.price as Decimal).toNumber(),
+    //   })),
+    // } as BikeWithLatestPrice;
   }
 }

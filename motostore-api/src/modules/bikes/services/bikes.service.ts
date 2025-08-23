@@ -126,10 +126,7 @@ export class BikesService {
     }
   }
 
-  async getOneBike(
-    bikeId: string,
-    userId: string | null,
-  ): Promise<Bike & { latestPrice: number | null }> {
+  async getOneBike(bikeId: string, userId: string | null): Promise<Bike> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: {
@@ -155,13 +152,13 @@ export class BikesService {
         status: 403,
       });
     }
-
-    return {
-      ...bike,
-      latestPrice:
-        bike.price.length > 0
-          ? (bike.price[0].price as Decimal).toNumber()
-          : null,
-    };
+    return bike;
+    // return {
+    //   ...bike,
+    //   latestPrice:
+    //     bike.price.length > 0
+    //       ? (bike.price[0].price as Decimal).toNumber()
+    //       : null,
+    // };
   }
 }

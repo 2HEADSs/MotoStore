@@ -12,6 +12,10 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
+import { AdminUpdateBikeStatusDto } from '../dto/updateBike.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { JwtUser } from 'src/modules/auth/guards/optional-jwt/optional-jwt.guard';
+import { ListingStatus } from '@prisma/client';
 
 @ApiTags('AdminBikes')
 @ApiBearerAuth('access-token')
@@ -43,5 +47,18 @@ export class AdminBikesController {
       throw new NotFoundException('Bike not found');
     }
     return this.adminBikesService.getOneBike(bikeId);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Admin: update any bike listing status' })
+  @ApiBody({ type: AdminUpdateBikeStatusDto })
+  updateBikeStatus(
+    @Param('id') bikeId: string,
+    @Body() dto: AdminUpdateBikeStatusDto,
+  ) {
+    if (!bikeId) {
+      throw new NotFoundException('Bike not found');
+    }
+    return this.adminBikesService.updateBikeStatus(bikeId, dto.status);
   }
 }

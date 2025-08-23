@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { Bike } from '@prisma/client';
+import { Bike, ListingStatus, User } from '@prisma/client';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
 import { Decimal } from '@prisma/client/runtime/library';
@@ -76,5 +76,24 @@ export class AdminBikesService {
           ? (bike.price[0].price as Decimal).toNumber()
           : null,
     };
+  }
+
+  async updateBikeStatus(
+    bikeId: string,
+    status: ListingStatus,
+  ): Promise<Bike & { latestPrice: number | null }> {
+    try {
+      await this.db.bike.update({
+        where: { id: bikeId },
+        data: { listingStatus: status },
+      });
+    } catch (err) {
+      if (err?.code === 'P2025') {
+        throw new NotFoundException('Bike not found');
+      }
+      console.error('Error updating bike status in admin service:', err);
+      throw new InternalServerErrorException('Failed to update bike status');
+    }
+    return this.getOneBike(bikeId);
   }
 }

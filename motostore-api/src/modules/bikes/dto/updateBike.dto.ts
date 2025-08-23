@@ -1,5 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BikeColor, Manufacturer } from '@prisma/client';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { BikeColor, ListingStatus, Manufacturer } from '@prisma/client';
 import {
   ArrayMaxSize,
   IsArray,
@@ -110,3 +110,11 @@ export class UpdateBikeDto {
   })
   listingStatus?: OwnerListingStatus;
 }
+
+
+export class AdminUpdateBikeStatusDto {
+  @ApiProperty({ enum: ListingStatus, example: ListingStatus.ACTIVE })
+  @IsEnum(ListingStatus)
+  status: ListingStatus;
+}
+

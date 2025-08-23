@@ -15,7 +15,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 //   status: AllowedStatus;
 // }
 
-export class MyBikesStatusFilterDto {
+export class BikesStatusFilterDto {
   @ApiPropertyOptional({
     enum: ListingStatus,
     description: 'Optional status filter',

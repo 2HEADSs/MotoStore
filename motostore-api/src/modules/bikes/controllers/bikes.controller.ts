@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { MyBikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
+import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
@@ -55,7 +55,7 @@ export class BikesController {
   @ApiOperation({ summary: 'List my bikes, optionally filtered by status' })
   findMyBikes(
     @CurrentUser() user: { id: string; email: string; role: string },
-    @Query() filter: MyBikesStatusFilterDto,
+    @Query() filter: BikesStatusFilterDto,
   ) {
     return this.bikesService.findMyBikes(user.id, filter.status);
   }

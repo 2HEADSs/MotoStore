@@ -16,9 +16,20 @@ export class AdminBikesService {
     private readonly bikeRepo: BikeRepository,
   ) {}
 
-  async findAll(): Promise<Bike[]> {
+  async findAll(status?: ListingStatus): Promise<Bike[]> {
     try {
-      return await this.db.bike.findMany();
+      const where = status ? { listingStatus: status } : undefined;
+      const bikes = await this.db.bike.findMany({
+        where,
+        include: {
+          price: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: { price: true, createdAt: true, updatedAt: true },
+          },
+        },
+      });
+      return bikes;
     } catch (error) {
       console.error('Error fetching bikes in admin service:', error);
       throw new InternalServerErrorException('Failed to fetch bikes');

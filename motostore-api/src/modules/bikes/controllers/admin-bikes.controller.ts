@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AdminBikesService } from '../services/admin-bikes.service';
@@ -16,6 +17,7 @@ import { AdminUpdateBikeStatusDto } from '../dto/updateBike.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtUser } from 'src/modules/auth/guards/optional-jwt/optional-jwt.guard';
 import { ListingStatus } from '@prisma/client';
+import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 
 @ApiTags('AdminBikes')
 @ApiBearerAuth('access-token')
@@ -25,9 +27,10 @@ export class AdminBikesController {
   constructor(private readonly adminBikesService: AdminBikesService) {}
 
   @Get('all')
-  @ApiOperation({ summary: 'List all active/sold bikes' })
-  getAll() {
-    return this.adminBikesService.findAll();
+  @ApiOperation({ summary: 'List all bikes, optionally filtered by status' })
+  getAll(@Query() filter: BikesStatusFilterDto) {
+    console.log(filter.status);
+    return this.adminBikesService.findAll(filter.status);
   }
 
   @Patch(':id')

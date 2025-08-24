@@ -64,16 +64,13 @@ export class BikesService {
           price: {
             orderBy: { createdAt: 'desc' },
             take: 1,
-            select: { price: true, createdAt: true },
+            select: { price: true },
           },
         },
       });
       return bikes.map((b) => ({
         ...b,
-        price: b.price.map((p) => ({
-          price: (p.price as Decimal).toNumber(),
-          createdAt: p.createdAt,
-        })),
+        price: b.price[0].price,
       }));
     } catch (error) {
       console.error('Error fetching user bikes:', error);
@@ -117,7 +114,6 @@ export class BikesService {
             data: { bikeId, price },
           });
         }
-        // console.log(updatedBike);
         return this.bikeRepo.findByIdWithLatestPrice(bikeId, tx);
       });
     } catch (error) {
@@ -132,8 +128,7 @@ export class BikesService {
       include: {
         price: {
           orderBy: { createdAt: 'desc' },
-          take: 1,
-          select: { price: true },
+          select: { price: true, createdAt: true },
         },
       },
     });
@@ -142,7 +137,9 @@ export class BikesService {
       throw new NotFoundException('Bike not found');
     }
 
-    const isOwner = bike.ownerId === userId;
+    console.log('user', userId);
+
+    const isOwner = !!userId && userId === bike.ownerId;
     const isPublic =
       bike.listingStatus === ListingStatus.ACTIVE ||
       bike.listingStatus === ListingStatus.SOLD;
@@ -152,13 +149,9 @@ export class BikesService {
         status: 403,
       });
     }
+    bike
     return bike;
-    // return {
-    //   ...bike,
-    //   latestPrice:
-    //     bike.price.length > 0
-    //       ? (bike.price[0].price as Decimal).toNumber()
-    //       : null,
-    // };
+
   }
+
 }

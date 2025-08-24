@@ -1,4 +1,5 @@
-import { OptionalJwtGuard } from './optional-jwt.guard';
+import { OptionalJwtGuard } from "../guards/optional-jwt/optional-jwt.guard";
+
 
 describe('OptionalJwtGuard', () => {
   it('should be defined', () => {

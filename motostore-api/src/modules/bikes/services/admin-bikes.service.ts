@@ -70,21 +70,13 @@ export class AdminBikesService {
       include: {
         price: {
           orderBy: { createdAt: 'desc' },
-          take: 1,
-          select: { price: true },
+          select: { price: true, createdAt: true },
         },
       },
     });
     if (!bike) {
       throw new NotFoundException('Bike not found');
     }
-    // return {
-    //   ...bike,
-    //   latestPrice:
-    //     bike.price.length > 0
-    //       ? (bike.price[0].price as Decimal).toNumber()
-    //       : null,
-    // };
     return bike;
   }
 

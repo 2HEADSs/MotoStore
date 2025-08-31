@@ -149,9 +149,21 @@ export class BikesService {
         status: 403,
       });
     }
-    bike
+    bike;
     return bike;
-
   }
 
+  async likeBike(bikeId: string, userId: string): Promise<Bike> {
+    const bike = await this.db.bike.findUnique({
+      where: { id: bikeId },
+    });
+    if (!bike) {
+      throw new NotFoundException('Bike not found');
+    }
+    return this.db.bike.update({
+      where: { id: bikeId },
+      data: { likedByUsers: { connect: { id: userId } } },
+      include: { likedByUsers: true },
+    });
+  }
 }

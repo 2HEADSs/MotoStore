@@ -79,4 +79,12 @@ export class BikesController {
   getOneBike(@Param('id') bikeId: string, @CurrentUser() user: JwtUser) {
     return this.bikesService.getOneBike(bikeId, user.id);
   }
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/like')
+  @ApiOperation({ summary: 'Like a bike' })
+  likeBike(@Param('id') bikeId: string, @CurrentUser() user: { id: string }) {
+    return this.bikesService.likeBike(bikeId, user.id);
+  }
 }

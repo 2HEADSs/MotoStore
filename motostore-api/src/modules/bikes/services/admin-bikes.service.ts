@@ -7,7 +7,6 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { Bike, ListingStatus, User } from '@prisma/client';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
-import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AdminBikesService {

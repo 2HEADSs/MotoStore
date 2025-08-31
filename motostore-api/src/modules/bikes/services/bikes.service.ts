@@ -178,4 +178,34 @@ export class BikesService {
       include: { likedByUsers: { select: { id: true } } },
     });
   }
+
+  async unlikeBike(bikeId: string, userId: string): Promise<Bike> {
+    const bike = await this.db.bike.findUnique({
+      where: { id: bikeId },
+      include: { likedByUsers: { select: { id: true } } },
+    });
+    if (!bike) throw new NotFoundException('Bike not found');
+    const isPublic =
+      bike.listingStatus === ListingStatus.ACTIVE ||
+      bike.listingStatus === ListingStatus.SOLD;
+    const isOwner = bike.ownerId === userId;
+    if (!isPublic || isOwner) {
+      throw new ForbiddenException({
+        message: 'You are not allowed to unlike this bike',
+        status: 403,
+      });
+    }
+
+    if (!bike.likedByUsers.some((user) => user.id === userId)) {
+      throw new ForbiddenException({
+        message: 'You are not allowed to unlike this bike',
+        status: 403,
+      });
+    }
+    return this.db.bike.update({
+      where: { id: bikeId },
+      data: { likedByUsers: { disconnect: { id: userId } } },
+      include: { likedByUsers: { select: { id: true } } },
+    });
+  }
 }

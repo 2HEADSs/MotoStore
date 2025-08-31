@@ -157,13 +157,25 @@ export class BikesService {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
     });
+
     if (!bike) {
       throw new NotFoundException('Bike not found');
     }
+    const isPublic =
+      bike.listingStatus === ListingStatus.ACTIVE ||
+      bike.listingStatus === ListingStatus.SOLD;
+    const isOwner = bike.ownerId === userId;
+    if (!isPublic || isOwner) {
+      throw new ForbiddenException({
+        message: 'You are not allowed to like this bike',
+        status: 403,
+      });
+    }
+
     return this.db.bike.update({
       where: { id: bikeId },
       data: { likedByUsers: { connect: { id: userId } } },
-      include: { likedByUsers: true },
+      include: { likedByUsers: { select: { id: true } } },
     });
   }
 }

@@ -208,4 +208,10 @@ export class BikesService {
       include: { likedByUsers: { select: { id: true } } },
     });
   }
+
+  async allLikedBikes(userId: string): Promise<Bike[]> {
+    return this.db.bike.findMany({
+      where: { likedByUsers: { some: { id: userId } } },
+    });
+  }
 }

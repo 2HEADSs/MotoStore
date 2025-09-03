@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Role, User } from '@prisma/client';
+import { Bike, Role, User } from '@prisma/client';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { UserFilterDto } from '../dto/users.dto';
 
@@ -44,6 +44,20 @@ export class AdminUsersService {
     } catch (error) {
       console.error('Error changing user status in admin service:', error);
       throw new InternalServerErrorException('Failed to change user status');
+    }
+  }
+
+  async userLikedBikes(userId: string): Promise<Bike[]> {
+    try {
+      const bikes = await this.db.bike.findMany({
+        where: { likedByUsers: { some: { id: userId } } },
+      });
+      return bikes;
+    } catch (error) {
+      console.error('Error fetching user liked bikes in admin service:', error);
+      throw new InternalServerErrorException(
+        'Failed to fetch user liked bikes',
+      );
     }
   }
 }

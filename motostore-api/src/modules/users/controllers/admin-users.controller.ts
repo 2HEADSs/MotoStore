@@ -12,9 +12,8 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { AdminUsersService } from '../services/admin-users.service';
 import { ChangeUserStatusDto, UserFilterDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
-import { User } from '@prisma/client';
+import { Bike, User } from '@prisma/client';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
 
 @ApiTags('AdminUsers')
 @Controller('admin/users')
@@ -48,5 +47,8 @@ export class AdminUsersController {
       changeUserStatusDto.isBlocked,
     );
   }
+  @Get(':id/likes')
+  userLikedBikes(@Param('id') userId: string): Promise<Bike[]> {
+    return this.adminUsersService.userLikedBikes(userId);
+  }
 }
-//  @Body() createBikeRequestBodyDto: CreateBikeRequestBodyDto,

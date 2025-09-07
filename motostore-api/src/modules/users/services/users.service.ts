@@ -44,7 +44,7 @@ export class UsersService {
       });
       return user;
     } catch (error) {
-      console.log(error, 'error users.service.ts -create user');
+      // console.log(error, 'error users.service.ts -create user');
       if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
         throw new ConflictException('Email already exists');
       }

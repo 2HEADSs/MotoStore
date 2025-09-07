@@ -14,9 +14,6 @@ import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
 import { AdminUpdateBikeStatusDto } from '../dto/updateBike.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { JwtUser } from 'src/modules/auth/guards/optional-jwt/optional-jwt.guard';
-import { ListingStatus } from '@prisma/client';
 import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 
 @ApiTags('AdminBikes')
@@ -29,7 +26,7 @@ export class AdminBikesController {
   @Get('all')
   @ApiOperation({ summary: 'List all bikes, optionally filtered by status' })
   getAll(@Query() filter: BikesStatusFilterDto) {
-    console.log(filter.status);
+    // console.log(filter.status);
     return this.adminBikesService.findAll(filter.status);
   }
 

@@ -9,7 +9,6 @@ import { Bike, ListingStatus } from '@prisma/client';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
-import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class BikesService {
@@ -137,7 +136,7 @@ export class BikesService {
       throw new NotFoundException('Bike not found');
     }
 
-    console.log('user', userId);
+    // console.log('user', userId);
 
     const isOwner = !!userId && userId === bike.ownerId;
     const isPublic =

@@ -1,7 +1,6 @@
-import { IsEnum, IsOptional, IsIn } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { ListingStatus } from '@prisma/client';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-
 
 export class BikesStatusFilterDto {
   @ApiPropertyOptional({

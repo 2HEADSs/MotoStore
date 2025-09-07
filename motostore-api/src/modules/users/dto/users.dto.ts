@@ -68,7 +68,6 @@ export class UserFilterDto {
   @ApiPropertyOptional({
     type: Boolean,
     description: 'Filter users by blocked status (true or false)',
-    // example: false,
   })
   @IsOptional()
   @Transform(({ value }) => value === 'true')

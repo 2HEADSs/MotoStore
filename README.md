@@ -22,7 +22,7 @@ MotoStore/
 │   └── package.json
 │
 ├── motostore-client/
-│   └── (work in progress)
+│   └── work in progres...
 │
 └── README.md
 ```
@@ -192,7 +192,7 @@ You can view the schema in [`motostore-api/prisma/schema.prisma`](motostore-api/
 - [ ] Admin dashboard implementation
 - [ ] Full documentation and test coverage
 - [ ] Image upload handling
-- [ ] Преминаване към production build
+- [ ] Deploying
 
 ---
 

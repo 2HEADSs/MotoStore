@@ -12,7 +12,7 @@ import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { UpdateBikeDto } from '../dto/updateBike.dto';
 import {

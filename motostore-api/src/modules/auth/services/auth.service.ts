@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   async login(user: User) {
-    console.log(user, 'AuthService => Login');
+    // console.log(user, 'AuthService => Login');
     try {
       const userPayload = {
         id: user.id,

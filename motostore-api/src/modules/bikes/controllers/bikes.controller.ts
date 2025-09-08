@@ -77,7 +77,6 @@ export class BikesController {
   @Get('findMyLikedBikes')
   @ApiOperation({ summary: 'All my liked bikes' })
   allLikedBikes(@CurrentUser() user: { id: string }) {
-    console.log(user);
     return this.bikesService.allLikedBikes(user.id);
   }
 

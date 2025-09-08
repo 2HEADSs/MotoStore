@@ -60,11 +60,13 @@ export class BikesService {
           take: 1,
           select: { price: true },
         },
+        likedByUsers: { select: { id: true } },
       },
     });
     return bikes.map((b) => ({
       ...b,
       price: b.price[0].price,
+      likedByUsers: b.likedByUsers.map((u) => u.id),
     }));
   }
 
@@ -84,11 +86,13 @@ export class BikesService {
             take: 1,
             select: { price: true },
           },
+          likedByUsers: { select: { id: true } },
         },
       });
       return bikes.map((b) => ({
         ...b,
         price: b.price[0].price,
+        likedByUsers: b.likedByUsers.map((u) => u.id),
       }));
     } catch (error) {
       console.error('Error fetching user bikes:', error);
@@ -143,7 +147,7 @@ export class BikesService {
   async getOneBike(
     bikeId: string,
     userId: string | null,
-  ): Promise<Bike & { price: string }> {
+  ): Promise<Bike & { price: string } & { likedByUsers: string[] }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: {
@@ -151,6 +155,7 @@ export class BikesService {
           orderBy: { createdAt: 'desc' },
           select: { price: true, createdAt: true },
         },
+        likedByUsers: { select: { id: true } },
       },
     });
 
@@ -171,13 +176,17 @@ export class BikesService {
       });
     }
     bike;
-    return { ...bike, price: bike.price[0].price.toString() };
+    return {
+      ...bike,
+      price: bike.price[0].price.toString(),
+      likedByUsers: bike.likedByUsers.map((u) => u.id),
+    };
   }
 
   async likeBike(
     bikeId: string,
     userId: string,
-  ): Promise<Bike & { price: string }> {
+  ): Promise<Bike & { price: string } & { likedByUsers: string[] }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
     });
@@ -195,6 +204,7 @@ export class BikesService {
         status: 403,
       });
     }
+    
 
     const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
@@ -208,7 +218,11 @@ export class BikesService {
       },
     });
 
-    return { ...updatedBike, price: updatedBike.price[0].price.toString() };
+    return {
+      ...updatedBike,
+      price: updatedBike.price[0].price.toString(),
+      likedByUsers: updatedBike.likedByUsers.map((u) => u.id),
+    };
   }
 
   async unlikeBike(
@@ -260,11 +274,13 @@ export class BikesService {
           take: 1,
           select: { price: true },
         },
+        likedByUsers: { select: { id: true } },
       },
     });
     return bikes.map((b) => ({
       ...b,
       price: b.price[0].price.toString(),
+      likedByUsers: b.likedByUsers.map((u) => u.id),
     }));
   }
 }

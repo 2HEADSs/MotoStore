@@ -6,7 +6,7 @@ export class BikeRepository {
   async findByIdWithLatestPrice(
     id: string,
     tx: Prisma.TransactionClient | PrismaClient = this.prisma,
-  ): Promise<(Bike & { price: string }) | null> {
+  ): Promise<(Bike & { price: string } & { likedByUsers: string[] }) | null> {
     const bike = await tx.bike.findUnique({
       where: { id },
       include: {
@@ -15,6 +15,7 @@ export class BikeRepository {
           take: 1,
           select: { price: true },
         },
+        likedByUsers: { select: { id: true } },
       },
     });
     if (!bike) return null;
@@ -22,6 +23,7 @@ export class BikeRepository {
     return {
       ...bike,
       price: bike.price[0].price.toString(),
+      likedByUsers: bike.likedByUsers.map((u) => u.id),
     };
   }
 }

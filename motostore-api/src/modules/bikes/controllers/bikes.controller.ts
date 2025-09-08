@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -8,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
+import { BikesStatusFilterDto } from '../dto/bikesStatusFilter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
@@ -26,13 +27,13 @@ import { ListingStatus } from '@prisma/client';
 export class BikesController {
   constructor(private readonly bikesService: BikesService) {}
 
-  @Get('bikes/active')
+  @Get('active')
   @ApiOperation({ summary: 'List all active bikes' })
   getAllActive() {
     return this.bikesService.findAllByStatus(ListingStatus.ACTIVE);
   }
 
-  @Get('bikes/sold')
+  @Get('sold')
   @ApiOperation({ summary: 'List all sold bikes' })
   getAllSold() {
     return this.bikesService.findAllByStatus(ListingStatus.SOLD);
@@ -63,7 +64,7 @@ export class BikesController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @Get('findMyBikes')
+  @Get('bikesCreatedByCurrentUser')
   @ApiOperation({ summary: 'List my bikes, optionally filtered by status' })
   findMyBikes(
     @CurrentUser() user: { id: string; email: string; role: string },
@@ -74,7 +75,7 @@ export class BikesController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @Get('findMyLikedBikes')
+  @Get('bikesLikesByCurrentUser')
   @ApiOperation({ summary: 'All my liked bikes' })
   allLikedBikes(@CurrentUser() user: { id: string }) {
     return this.bikesService.allLikedBikes(user.id);
@@ -98,8 +99,8 @@ export class BikesController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @Post(':id/unlike')
-  @ApiOperation({ summary: 'Like a bike' })
+  @Delete(':id/like')
+  @ApiOperation({ summary: 'Unlike a bike' })
   unlikeBike(@Param('id') bikeId: string, @CurrentUser() user: { id: string }) {
     return this.bikesService.unlikeBike(bikeId, user.id);
   }

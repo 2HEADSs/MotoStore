@@ -27,13 +27,13 @@ export class BikesController {
   constructor(private readonly bikesService: BikesService) {}
 
   @Get('bikes/active')
-  @ApiOperation({ summary: 'List all active/sold bikes' })
+  @ApiOperation({ summary: 'List all active bikes' })
   getAllActive() {
     return this.bikesService.findAllByStatus(ListingStatus.ACTIVE);
   }
 
   @Get('bikes/sold')
-  @ApiOperation({ summary: 'List all active/sold bikes' })
+  @ApiOperation({ summary: 'List all sold bikes' })
   getAllSold() {
     return this.bikesService.findAllByStatus(ListingStatus.SOLD);
   }
@@ -51,6 +51,18 @@ export class BikesController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update your own bike listing' })
+  updateMyBike(
+    @Param('id') bikeId: string,
+    @Body() updateBikeDto: UpdateBikeDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.bikesService.updateMyBike(user.id, bikeId, updateBikeDto);
+  }
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Get('findMyBikes')
   @ApiOperation({ summary: 'List my bikes, optionally filtered by status' })
   findMyBikes(
@@ -62,14 +74,11 @@ export class BikesController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update your own bike listing' })
-  updateMyBike(
-    @Param('id') bikeId: string,
-    @Body() updateBikeDto: UpdateBikeDto,
-    @CurrentUser() user: { id: string },
-  ) {
-    return this.bikesService.updateMyBike(user.id, bikeId, updateBikeDto);
+  @Get('findMyLikedBikes')
+  @ApiOperation({ summary: 'All my liked bikes' })
+  allLikedBikes(@CurrentUser() user: { id: string }) {
+    console.log(user);
+    return this.bikesService.allLikedBikes(user.id);
   }
 
   @ApiBearerAuth('access-token')
@@ -94,13 +103,5 @@ export class BikesController {
   @ApiOperation({ summary: 'Like a bike' })
   unlikeBike(@Param('id') bikeId: string, @CurrentUser() user: { id: string }) {
     return this.bikesService.unlikeBike(bikeId, user.id);
-  }
-
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
-  @Post('findMyLikedBikes')
-  @ApiOperation({ summary: 'All my liked bikes' })
-  allLikedBikes(@CurrentUser() user: { id: string }) {
-    return this.bikesService.allLikedBikes(user.id);
   }
 }

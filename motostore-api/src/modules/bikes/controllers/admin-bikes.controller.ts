@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Query,
@@ -34,18 +33,12 @@ export class AdminBikesController {
   @ApiOperation({ summary: 'Admin: update any bike listing' })
   @ApiBody({ type: AdminUpdateBikeDto })
   updateBike(@Param('id') bikeId: string, @Body() dto: AdminUpdateBikeDto) {
-    if (!bikeId) {
-      throw new NotFoundException('Bike not found');
-    }
     return this.adminBikesService.updateBike(bikeId, dto);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Admin: get any bike listing' })
   getBike(@Param('id') bikeId: string) {
-    if (!bikeId) {
-      throw new NotFoundException('Bike not found');
-    }
     return this.adminBikesService.getOneBike(bikeId);
   }
 
@@ -56,9 +49,6 @@ export class AdminBikesController {
     @Param('id') bikeId: string,
     @Body() dto: AdminUpdateBikeStatusDto,
   ) {
-    if (!bikeId) {
-      throw new NotFoundException('Bike not found');
-    }
     return this.adminBikesService.updateBikeStatus(bikeId, dto.status);
   }
 }

@@ -20,10 +20,10 @@ export class BikesService {
   async createBike(
     userId: string,
     data: CreateBikeRequestBodyDto,
-  ): Promise<Bike> {
+  ): Promise<Bike & { price: string }> {
     const { price, ...bikeData } = data;
     try {
-      return await this.db.bike.create({
+      const bike = await this.db.bike.create({
         data: {
           ownerId: userId,
           ...bikeData,
@@ -35,7 +35,15 @@ export class BikesService {
             },
           }),
         },
+        include: {
+          price: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: { price: true },
+          },
+        },
       });
+      return { ...bike, price: bike.price[0].price.toString() };
     } catch (error) {
       console.error('Error creating bike:', error);
       throw new InternalServerErrorException('Failed to create bike');
@@ -43,10 +51,21 @@ export class BikesService {
   }
 
   async findAllByStatus(status: ListingStatus): Promise<Bike[]> {
-    return await this.db.bike.findMany({
+    const bikes = await this.db.bike.findMany({
       where: { listingStatus: status },
       orderBy: { createdAt: 'desc' },
+      include: {
+        price: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { price: true },
+        },
+      },
     });
+    return bikes.map((b) => ({
+      ...b,
+      price: b.price[0].price,
+    }));
   }
 
   async findMyBikes(userId: string, status?: ListingStatus): Promise<Bike[]> {
@@ -121,7 +140,10 @@ export class BikesService {
     }
   }
 
-  async getOneBike(bikeId: string, userId: string | null): Promise<Bike> {
+  async getOneBike(
+    bikeId: string,
+    userId: string | null,
+  ): Promise<Bike & { price: string }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: {
@@ -149,10 +171,13 @@ export class BikesService {
       });
     }
     bike;
-    return bike;
+    return { ...bike, price: bike.price[0].price.toString() };
   }
 
-  async likeBike(bikeId: string, userId: string): Promise<Bike> {
+  async likeBike(
+    bikeId: string,
+    userId: string,
+  ): Promise<Bike & { price: string }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
     });
@@ -171,14 +196,25 @@ export class BikesService {
       });
     }
 
-    return this.db.bike.update({
+    const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
       data: { likedByUsers: { connect: { id: userId } } },
-      include: { likedByUsers: { select: { id: true } } },
+      include: {
+        likedByUsers: { select: { id: true } },
+        price: {
+          orderBy: { createdAt: 'desc' },
+          select: { price: true, createdAt: true },
+        },
+      },
     });
+
+    return { ...updatedBike, price: updatedBike.price[0].price.toString() };
   }
 
-  async unlikeBike(bikeId: string, userId: string): Promise<Bike> {
+  async unlikeBike(
+    bikeId: string,
+    userId: string,
+  ): Promise<Bike & { price: string }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: { likedByUsers: { select: { id: true } } },
@@ -201,16 +237,34 @@ export class BikesService {
         status: 403,
       });
     }
-    return this.db.bike.update({
+    const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
       data: { likedByUsers: { disconnect: { id: userId } } },
-      include: { likedByUsers: { select: { id: true } } },
+      include: {
+        likedByUsers: { select: { id: true } },
+        price: {
+          orderBy: { createdAt: 'desc' },
+          select: { price: true, createdAt: true },
+        },
+      },
     });
+    return { ...updatedBike, price: updatedBike.price[0].price.toString() };
   }
 
   async allLikedBikes(userId: string): Promise<Bike[]> {
-    return this.db.bike.findMany({
+    const bikes = await this.db.bike.findMany({
       where: { likedByUsers: { some: { id: userId } } },
+      include: {
+        price: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { price: true },
+        },
+      },
     });
+    return bikes.map((b) => ({
+      ...b,
+      price: b.price[0].price.toString(),
+    }));
   }
 }

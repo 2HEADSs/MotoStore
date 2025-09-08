@@ -1,17 +1,12 @@
 import { Bike, Prisma, PrismaClient } from '@prisma/client';
 import { DatabaseService } from 'src/modules/database/database.service';
 
-type LatestPrice = {
-  price: number;
-  createdAt: Date;
-};
-
 export class BikeRepository {
   constructor(private readonly prisma: DatabaseService) {}
   async findByIdWithLatestPrice(
     id: string,
     tx: Prisma.TransactionClient | PrismaClient = this.prisma,
-  ): Promise<Bike | null> {
+  ): Promise<(Bike & { price: string }) | null> {
     const bike = await tx.bike.findUnique({
       where: { id },
       include: {
@@ -23,6 +18,10 @@ export class BikeRepository {
       },
     });
     if (!bike) return null;
-    return bike;
+
+    return {
+      ...bike,
+      price: bike.price[0].price.toString(),
+    };
   }
 }

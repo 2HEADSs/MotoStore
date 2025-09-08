@@ -13,7 +13,7 @@ import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminUpdateBikeDto } from '../dto/adminUpdateBike.dto';
 import { AdminUpdateBikeStatusDto } from '../dto/updateBike.dto';
-import { BikesStatusFilterDto } from '../dto/bikesStatusFileter.dto';
+import { BikesStatusFilterDto } from '../dto/bikesStatusFilter.dto';
 
 @ApiTags('AdminBikes')
 @ApiBearerAuth('access-token')

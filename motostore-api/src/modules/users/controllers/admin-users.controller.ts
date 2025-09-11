@@ -13,7 +13,7 @@ import { AdminUsersService } from '../services/admin-users.service';
 import { ChangeUserStatusDto, UserFilterDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { Bike, User } from '@prisma/client';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('AdminUsers')
 @Controller('admin/users')
@@ -26,11 +26,13 @@ export class AdminUsersController {
   ) {}
 
   @Get('all')
+  @ApiOperation({ summary: 'Get all users' })
   getAll(@Query() filter: UserFilterDto) {
     return this.adminUsersService.findAll(filter);
   }
 
   @Get('user-profile')
+  @ApiOperation({ summary: 'Get user profile' })
   async getUserProfile(@Query('email') email: string): Promise<User | null> {
     // console.log('Searching for email:', email);
     const user = await this.usersService.getUserByEmail(email);
@@ -38,6 +40,7 @@ export class AdminUsersController {
     return user;
   }
   @Patch(':id/status')
+  @ApiOperation({ summary: 'Block/Unblock user' })
   blockUser(
     @Param('id') id: string,
     @Body() changeUserStatusDto: ChangeUserStatusDto,
@@ -48,6 +51,7 @@ export class AdminUsersController {
     );
   }
   @Get(':id/likes')
+  @ApiOperation({ summary: 'Get user liked bikes' })
   userLikedBikes(@Param('id') userId: string): Promise<Bike[]> {
     return this.adminUsersService.userLikedBikes(userId);
   }

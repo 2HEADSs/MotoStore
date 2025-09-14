@@ -5,11 +5,12 @@ import { DatabaseModule } from 'src/modules/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { AdminUsersController } from './controllers/admin-users.controller';
 import { AdminUsersService } from './services/admin-users.service';
+import { BikesModule } from '../bikes/bikes.module';
 
 @Module({
   providers: [UsersService, AdminUsersService],
   controllers: [UsersController, AdminUsersController],
-  imports: [DatabaseModule, forwardRef(() => AuthModule)],
+  imports: [DatabaseModule, forwardRef(() => AuthModule), BikesModule],
   exports: [UsersService],
 })
 export class UsersModule {}

@@ -10,5 +10,6 @@ import { BikeRepository } from './repositories/bike.repository';
   imports: [DatabaseModule],
   providers: [BikesService, AdminBikesService, BikeRepository],
   controllers: [BikesController, AdminBikesController],
+  exports: [BikesService],
 })
 export class BikesModule {}

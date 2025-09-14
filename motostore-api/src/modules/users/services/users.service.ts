@@ -7,7 +7,8 @@ import {
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
+import { ListingStatus, User } from '@prisma/client';
+import { BikesService } from 'src/modules/bikes/services/bikes.service';
 
 type SafeUser = Omit<User, 'hashedPassword'>;
 
@@ -24,7 +25,10 @@ const userSelectFields = {
 
 @Injectable()
 export class UsersService {
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private readonly bikesService: BikesService,
+  ) {}
 
   async createUser(data: CreateUserRequestBodyDto): Promise<SafeUser> {
     try {
@@ -79,5 +83,13 @@ export class UsersService {
       return user;
     } catch (error) {}
     throw new InternalServerErrorException('Failed to validate user');
+  }
+
+  async getLikedBikes(userId: string) {
+    return this.bikesService.allLikedBikes(userId);
+  }
+
+  async getCreatedBikes(userId: string, status?: ListingStatus) {
+    return this.bikesService.findMyBikes(userId, status);
   }
 }

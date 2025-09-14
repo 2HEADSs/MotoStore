@@ -63,25 +63,6 @@ export class BikesController {
   }
 
   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
-  @Get('bikesCreatedByCurrentUser')
-  @ApiOperation({ summary: 'List my bikes, optionally filtered by status' })
-  findMyBikes(
-    @CurrentUser() user: { id: string; email: string; role: string },
-    @Query() filter: BikesStatusFilterDto,
-  ) {
-    return this.bikesService.findMyBikes(user.id, filter.status);
-  }
-
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
-  @Get('bikesLikesByCurrentUser')
-  @ApiOperation({ summary: 'All my liked bikes' })
-  allLikedBikes(@CurrentUser() user: { id: string }) {
-    return this.bikesService.allLikedBikes(user.id);
-  }
-
-  @ApiBearerAuth('access-token')
   @UseGuards(OptionalJwtGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Show single bike' })

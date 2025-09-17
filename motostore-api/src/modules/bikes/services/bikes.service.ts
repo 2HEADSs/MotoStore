@@ -9,6 +9,7 @@ import { Bike, ListingStatus } from '@prisma/client';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
+import { BikeWithMeta } from '../types/bikes-with-meta.type';
 
 @Injectable()
 export class BikesService {
@@ -20,7 +21,7 @@ export class BikesService {
   async createBike(
     userId: string,
     data: CreateBikeRequestBodyDto,
-  ): Promise<Bike & { price: string; likedByUsers: string[] }> {
+  ): Promise<BikeWithMeta> {
     const { price, ...bikeData } = data;
     try {
       const bike = await this.db.bike.create({
@@ -55,7 +56,7 @@ export class BikesService {
     }
   }
 
-  async findAllByStatus(status: ListingStatus): Promise<Bike[]> {
+  async findAllByStatus(status: ListingStatus): Promise<BikeWithMeta[]> {
     const bikes = await this.db.bike.findMany({
       where: { listingStatus: status },
       orderBy: { createdAt: 'desc' },
@@ -75,7 +76,10 @@ export class BikesService {
     }));
   }
 
-  async findMyBikes(userId: string, status?: ListingStatus): Promise<Bike[]> {
+  async findMyBikes(
+    userId: string,
+    status?: ListingStatus,
+  ): Promise<BikeWithMeta[]> {
     try {
       const where = status
         ? {
@@ -109,7 +113,7 @@ export class BikesService {
     ownerId: string,
     bikeId: string,
     data: UpdateBikeDto,
-  ): Promise<Bike | null> {
+  ): Promise<BikeWithMeta> {
     const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
     if (!bike || bike.ownerId !== ownerId) {
       throw new ForbiddenException('You are not allowed to update this bike');
@@ -141,10 +145,18 @@ export class BikesService {
             data: { bikeId, price },
           });
         }
-        return this.bikeRepo.findByIdWithLatestPrice(bikeId, tx);
+        const updatedBike = await this.bikeRepo.findByIdWithLatestPrice(
+          bikeId,
+          tx,
+        );
+        if (!updatedBike) {
+          throw new InternalServerErrorException(
+            'Bike update failed unexpectedly',
+          );
+        }
+        return updatedBike;
       });
     } catch (error) {
-      console.log('Error updating bike:', error);
       throw new InternalServerErrorException('Failed to update bike');
     }
   }
@@ -152,7 +164,7 @@ export class BikesService {
   async getOneBike(
     bikeId: string,
     userId: string | null,
-  ): Promise<Bike & { price: string } & { likedByUsers: string[] }> {
+  ): Promise<BikeWithMeta> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: {
@@ -188,10 +200,7 @@ export class BikesService {
     };
   }
 
-  async likeBike(
-    bikeId: string,
-    userId: string,
-  ): Promise<Bike & { price: string } & { likedByUsers: string[] }> {
+  async likeBike(bikeId: string, userId: string): Promise<BikeWithMeta> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
     });
@@ -229,10 +238,7 @@ export class BikesService {
     };
   }
 
-  async unlikeBike(
-    bikeId: string,
-    userId: string,
-  ): Promise<Bike & { price: string; likedByUsers: string[] }> {
+  async unlikeBike(bikeId: string, userId: string): Promise<BikeWithMeta> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: { likedByUsers: { select: { id: true } } },
@@ -275,7 +281,7 @@ export class BikesService {
     };
   }
 
-  async allLikedBikes(userId: string): Promise<Bike[]> {
+  async allLikedBikes(userId: string): Promise<BikeWithMeta[]> {
     const bikes = await this.db.bike.findMany({
       where: { likedByUsers: { some: { id: userId } } },
       include: {

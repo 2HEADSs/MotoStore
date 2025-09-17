@@ -20,7 +20,7 @@ export class BikesService {
   async createBike(
     userId: string,
     data: CreateBikeRequestBodyDto,
-  ): Promise<Bike & { price: string }> {
+  ): Promise<Bike & { price: string; likedByUsers: string[] }> {
     const { price, ...bikeData } = data;
     try {
       const bike = await this.db.bike.create({
@@ -41,9 +41,14 @@ export class BikesService {
             take: 1,
             select: { price: true },
           },
+          likedByUsers: { select: { id: true } },
         },
       });
-      return { ...bike, price: bike.price[0].price.toString() };
+      return {
+        ...bike,
+        price: bike.price[0].price.toString(),
+        likedByUsers: bike.likedByUsers.map((u) => u.id),
+      };
     } catch (error) {
       console.error('Error creating bike:', error);
       throw new InternalServerErrorException('Failed to create bike');
@@ -204,7 +209,6 @@ export class BikesService {
         status: 403,
       });
     }
-    
 
     const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
@@ -228,7 +232,7 @@ export class BikesService {
   async unlikeBike(
     bikeId: string,
     userId: string,
-  ): Promise<Bike & { price: string }> {
+  ): Promise<Bike & { price: string; likedByUsers: string[] }> {
     const bike = await this.db.bike.findUnique({
       where: { id: bikeId },
       include: { likedByUsers: { select: { id: true } } },
@@ -237,7 +241,9 @@ export class BikesService {
     const isPublic =
       bike.listingStatus === ListingStatus.ACTIVE ||
       bike.listingStatus === ListingStatus.SOLD;
+
     const isOwner = bike.ownerId === userId;
+
     if (!isPublic || isOwner) {
       throw new ForbiddenException({
         message: 'You are not allowed to unlike this bike',
@@ -262,7 +268,11 @@ export class BikesService {
         },
       },
     });
-    return { ...updatedBike, price: updatedBike.price[0].price.toString() };
+    return {
+      ...updatedBike,
+      price: updatedBike.price[0].price.toString(),
+      likedByUsers: updatedBike.likedByUsers.map((u) => u.id),
+    };
   }
 
   async allLikedBikes(userId: string): Promise<Bike[]> {

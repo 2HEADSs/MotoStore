@@ -65,7 +65,7 @@ export class BikesService {
     });
     return bikes.map((b) => ({
       ...b,
-      price: b.price[0].price,
+      price: b.price[0].price.toString(),
       likedByUsers: b.likedByUsers.map((u) => u.id),
     }));
   }
@@ -91,7 +91,7 @@ export class BikesService {
       });
       return bikes.map((b) => ({
         ...b,
-        price: b.price[0].price,
+        price: b.price[0].price.toString(),
         likedByUsers: b.likedByUsers.map((u) => u.id),
       }));
     } catch (error) {

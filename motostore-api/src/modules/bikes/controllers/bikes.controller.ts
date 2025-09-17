@@ -9,7 +9,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BikesStatusFilterDto } from '../dto/bikesStatusFilter.dto';
 import { BikesService } from '../services/bikes.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';

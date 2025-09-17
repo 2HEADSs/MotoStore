@@ -1,12 +1,13 @@
-import { Bike, Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { BikeWithMeta } from '../types/bikes-with-meta.type';
 
 export class BikeRepository {
   constructor(private readonly prisma: DatabaseService) {}
   async findByIdWithLatestPrice(
     id: string,
     tx: Prisma.TransactionClient | PrismaClient = this.prisma,
-  ): Promise<(Bike & { price: string } & { likedByUsers: string[] }) | null> {
+  ): Promise<BikeWithMeta | null> {
     const bike = await tx.bike.findUnique({
       where: { id },
       include: {

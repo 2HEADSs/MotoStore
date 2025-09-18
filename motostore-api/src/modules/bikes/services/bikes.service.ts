@@ -1,11 +1,13 @@
 import {
+  ConflictException,
   ForbiddenException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { Bike, ListingStatus } from '@prisma/client';
+import { ListingStatus } from '@prisma/client';
 import { CreateBikeRequestBodyDto } from '../dto/createBike.dto';
 import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
@@ -109,42 +111,117 @@ export class BikesService {
     }
   }
 
+  // async updateMyBikeOld(
+  //   ownerId: string,
+  //   bikeId: string,
+  //   data: UpdateBikeDto,
+  // ): Promise<BikeWithMeta> {
+
+  //   const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
+  //   if (!bike || bike.ownerId !== ownerId) {
+  //     throw new ForbiddenException('You are not allowed to update this bike');
+  //   }
+
+  //   const { price, ...bikeData } = data;
+  //   if (bike.listingStatus === ListingStatus.ACTIVE) {
+  //     bikeData.listingStatus = OwnerListingStatus.PENDING_APPROVAL;
+  //   }
+
+  //   if (
+  //     bike.listingStatus == ListingStatus.SOLD ||
+  //     bike.listingStatus == ListingStatus.UNACTIVE
+  //   ) {
+  //     throw new ForbiddenException({
+  //       message: 'You are not allowed to update this bike',
+  //       status: 403,
+  //     });
+  //   }
+  //   try {
+  //     return await this.db.$transaction(async (tx) => {
+  //       await tx.bike.update({
+  //         where: { id: bikeId },
+  //         data: bikeData,
+  //       });
+
+  //       if (price !== undefined) {
+  //         await tx.prices.create({
+  //           data: { bikeId, price },
+  //         });
+  //       }
+  //       const updatedBike = await this.bikeRepo.findByIdWithLatestPrice(
+  //         bikeId,
+  //         tx,
+  //       );
+  //       if (!updatedBike) {
+  //         throw new InternalServerErrorException(
+  //           'Bike update failed unexpectedly',
+  //         );
+  //       }
+  //       return updatedBike;
+  //     });
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Failed to update bike');
+  //   }
+  // }
+
   async updateMyBike(
     ownerId: string,
     bikeId: string,
     data: UpdateBikeDto,
   ): Promise<BikeWithMeta> {
-    const bike = await this.db.bike.findUnique({ where: { id: bikeId } });
-    if (!bike || bike.ownerId !== ownerId) {
-      throw new ForbiddenException('You are not allowed to update this bike');
-    }
-
-    const { price, ...bikeData } = data;
-    if (bike.listingStatus === ListingStatus.ACTIVE) {
-      bikeData.listingStatus = OwnerListingStatus.PENDING_APPROVAL;
-    }
-
-    if (
-      bike.listingStatus == ListingStatus.SOLD ||
-      bike.listingStatus == ListingStatus.UNACTIVE
-    ) {
-      throw new ForbiddenException({
-        message: 'You are not allowed to update this bike',
-        status: 403,
-      });
-    }
     try {
       return await this.db.$transaction(async (tx) => {
-        await tx.bike.update({
+        const current = await tx.bike.findUnique({
           where: { id: bikeId },
-          data: bikeData,
+          select: { ownerId: true, listingStatus: true },
         });
+
+        if (!current || current.ownerId !== ownerId) {
+          throw new ForbiddenException(
+            'You are not allowed to update this bike',
+          );
+        }
+
+        if (
+          current.listingStatus === ListingStatus.SOLD ||
+          current.listingStatus === ListingStatus.UNACTIVE
+        ) {
+          throw new ForbiddenException(
+            'You are not allowed to update this bike',
+          );
+        }
+
+        const { price, ...bikeData } = data;
+
+        const nextStatus =
+          current.listingStatus === ListingStatus.ACTIVE
+            ? OwnerListingStatus.PENDING_APPROVAL
+            : undefined;
+
+        const { count } = await tx.bike.updateMany({
+          where: {
+            id: bikeId,
+            ownerId,
+            listingStatus: current.listingStatus,
+          },
+          data: {
+            ...bikeData,
+            ...(nextStatus ? { listingStatus: nextStatus } : {}),
+          },
+        });
+
+        if (count === 0) {
+          throw new ConflictException(
+            'Bike was modified by another process. Please retry.',
+          );
+        }
 
         if (price !== undefined) {
           await tx.prices.create({
             data: { bikeId, price },
           });
         }
+
         const updatedBike = await this.bikeRepo.findByIdWithLatestPrice(
           bikeId,
           tx,
@@ -154,9 +231,14 @@ export class BikesService {
             'Bike update failed unexpectedly',
           );
         }
+
         return updatedBike;
       });
     } catch (error) {
+      // Запази семантиката на 403/409; увий само неочаквани грешки като 500
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Failed to update bike');
     }
   }

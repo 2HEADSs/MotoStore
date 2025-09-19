@@ -13,6 +13,15 @@ import { OwnerListingStatus, UpdateBikeDto } from '../dto/updateBike.dto';
 import { BikeRepository } from '../repositories/bike.repository';
 import { BikeWithMeta } from '../types/bikes-with-meta.type';
 
+const BIKE_META_INCLUDE = {
+  price: {
+    orderBy: { createdAt: 'desc' as const },
+    take: 1,
+    select: { price: true },
+  },
+  likedByUsers: { select: { id: true } },
+} as const;
+
 @Injectable()
 export class BikesService {
   constructor(
@@ -38,14 +47,7 @@ export class BikesService {
             },
           }),
         },
-        include: {
-          price: {
-            orderBy: { createdAt: 'desc' },
-            take: 1,
-            select: { price: true },
-          },
-          likedByUsers: { select: { id: true } },
-        },
+        include: BIKE_META_INCLUDE,
       });
       return {
         ...bike,
@@ -62,14 +64,7 @@ export class BikesService {
     const bikes = await this.db.bike.findMany({
       where: { listingStatus: status },
       orderBy: { createdAt: 'desc' },
-      include: {
-        price: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-          select: { price: true },
-        },
-        likedByUsers: { select: { id: true } },
-      },
+      include: BIKE_META_INCLUDE,
     });
     return bikes.map((b) => ({
       ...b,
@@ -91,14 +86,7 @@ export class BikesService {
         : { ownerId: userId };
       const bikes = await this.db.bike.findMany({
         where,
-        include: {
-          price: {
-            orderBy: { createdAt: 'desc' },
-            take: 1,
-            select: { price: true },
-          },
-          likedByUsers: { select: { id: true } },
-        },
+        include: BIKE_META_INCLUDE,
       });
       return bikes.map((b) => ({
         ...b,
@@ -304,13 +292,7 @@ export class BikesService {
     const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
       data: { likedByUsers: { connect: { id: userId } } },
-      include: {
-        likedByUsers: { select: { id: true } },
-        price: {
-          orderBy: { createdAt: 'desc' },
-          select: { price: true, createdAt: true },
-        },
-      },
+      include: BIKE_META_INCLUDE,
     });
 
     return {
@@ -348,13 +330,7 @@ export class BikesService {
     const updatedBike = await this.db.bike.update({
       where: { id: bikeId },
       data: { likedByUsers: { disconnect: { id: userId } } },
-      include: {
-        likedByUsers: { select: { id: true } },
-        price: {
-          orderBy: { createdAt: 'desc' },
-          select: { price: true, createdAt: true },
-        },
-      },
+      include: BIKE_META_INCLUDE,
     });
     return {
       ...updatedBike,
@@ -366,14 +342,7 @@ export class BikesService {
   async allLikedBikes(userId: string): Promise<BikeWithMeta[]> {
     const bikes = await this.db.bike.findMany({
       where: { likedByUsers: { some: { id: userId } } },
-      include: {
-        price: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-          select: { price: true },
-        },
-        likedByUsers: { select: { id: true } },
-      },
+      include: BIKE_META_INCLUDE,
     });
     return bikes.map((b) => ({
       ...b,

@@ -9,6 +9,7 @@ import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
 import { ListingStatus, User } from '@prisma/client';
 import { BikesService } from 'src/modules/bikes/services/bikes.service';
+import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
 
 type SafeUser = Omit<User, 'hashedPassword'>;
 
@@ -85,11 +86,14 @@ export class UsersService {
     throw new InternalServerErrorException('Failed to validate user');
   }
 
-  async getLikedBikes(userId: string) {
+  async getLikedBikes(userId: string): Promise<BikeWithMeta[]> {
     return this.bikesService.allLikedBikes(userId);
   }
 
-  async getCreatedBikes(userId: string, status?: ListingStatus) {
+  async getCreatedBikes(
+    userId: string,
+    status?: ListingStatus,
+  ): Promise<BikeWithMeta[]> {
     return this.bikesService.findMyBikes(userId, status);
   }
 }

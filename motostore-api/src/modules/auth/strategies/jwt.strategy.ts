@@ -14,14 +14,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { id: string; email: string; role: string }) {
-    const user = await this.usersService.getUserByEmail(payload.email);
-    if (!user || user.isBlocked) {
+    const status = await this.usersService.getUserStatusById(payload.id);
+    if (!status || status.isBlocked) {
       throw new ForbiddenException('Account is disabled');
     }
-    return {
-      id: payload.id,
-      email: payload.email,
-      role: payload.role,
-    };
+    return { id: payload.id, email: payload.email, role: payload.role };
   }
 }

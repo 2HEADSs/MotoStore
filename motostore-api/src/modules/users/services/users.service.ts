@@ -107,5 +107,10 @@ export class UsersService {
     return this.bikesService.findMyBikes(userId, status);
   }
 
-
+  async getUserStatusById(id: string) {
+    return this.db.user.findUnique({
+      where: { id },
+      select: { id: true, isBlocked: true },
+    });
+  }
 }

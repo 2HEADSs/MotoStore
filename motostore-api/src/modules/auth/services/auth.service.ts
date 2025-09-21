@@ -20,7 +20,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User> {
     try {
       // console.log('AuthService => validateUser');
-      const user = await this.usersService.getUserByEmail(email);
+      const user = await this.usersService.getUserForAuth(email);
       const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
       if (!passwordMatch) {
         console.log('passwordMatch');
@@ -48,16 +48,16 @@ export class AuthService {
     // console.log(user, 'AuthService => Login');
     try {
       const userPayload = {
-        // id: user.id,
+        id: user.id,
         email: user.email,
         username: user.username,
         phone: user.phone,
         role: user.role,
       };
-      const token = this.jwtService.sign(userPayload);
+      const access_token = this.jwtService.sign(userPayload);
       return {
         userPayload,
-        access_token: token,
+        access_token,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;

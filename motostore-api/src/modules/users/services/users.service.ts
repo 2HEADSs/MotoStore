@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { ListingStatus, User } from '@prisma/client';
 import { BikesService } from 'src/modules/bikes/services/bikes.service';
 import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
+import { AuthUser } from '../types/auth-user.type';
 
 type SafeUser = Omit<User, 'hashedPassword'>;
 
@@ -22,7 +23,19 @@ const userSelectFields = {
   role: true,
   createdAt: true,
   updatedAt: true,
-};
+} as const;
+
+const authUserSelect = {
+  id: true,
+  email: true,
+  username: true,
+  phone: true,
+  role: true,
+  isBlocked: true,
+  createdAt: true,
+  updatedAt: true,
+  hashedPassword: true, // само за auth
+} as const;
 
 @Injectable()
 export class UsersService {
@@ -63,7 +76,7 @@ export class UsersService {
   async getUserByEmail(email: string): Promise<any> {
     const user = await this.db.user.findUnique({
       where: { email },
-      // select: userSelectFields,
+      select: userSelectFields,
     });
 
     if (!user) {
@@ -72,6 +85,17 @@ export class UsersService {
     return user;
   }
 
+  async getUserForAuth(email: string): Promise<AuthUser> {
+    const user = await this.db.user.findUnique({
+      where: { email },
+      select: authUserSelect,
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    return user;
+  }
   async getLikedBikes(userId: string): Promise<BikeWithMeta[]> {
     return this.bikesService.allLikedBikes(userId);
   }
@@ -82,4 +106,6 @@ export class UsersService {
   ): Promise<BikeWithMeta[]> {
     return this.bikesService.findMyBikes(userId, status);
   }
+
+
 }

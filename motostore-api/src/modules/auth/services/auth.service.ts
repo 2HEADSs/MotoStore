@@ -48,7 +48,7 @@ export class AuthService {
     // console.log(user, 'AuthService => Login');
     try {
       const userPayload = {
-        id: user.id,
+        // id: user.id,
         email: user.email,
         username: user.username,
         phone: user.phone,

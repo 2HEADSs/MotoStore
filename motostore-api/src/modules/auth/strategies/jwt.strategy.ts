@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { id: string; email: string; role: string }) {
-    const user = await this.usersService.getUserById(payload.id);
+    const user = await this.usersService.getUserByEmail(payload.email);
     if (!user || user.isBlocked) {
       throw new ForbiddenException('Account is disabled');
     }

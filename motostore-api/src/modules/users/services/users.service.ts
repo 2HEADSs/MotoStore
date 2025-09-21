@@ -60,30 +60,16 @@ export class UsersService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<any> {
     const user = await this.db.user.findUnique({
       where: { email },
+      // select: userSelectFields,
     });
 
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
-  }
-
-  async getUserById(id: string): Promise<User | null> {
-    try {
-      const user = await this.db.user.findUnique({
-        where: {
-          id: id,
-        },
-      });
-      if (!user) {
-        throw new NotFoundException(`User with id ${id} not found`);
-      }
-      return user;
-    } catch (error) {}
-    throw new InternalServerErrorException('Failed to validate user');
   }
 
   async getLikedBikes(userId: string): Promise<BikeWithMeta[]> {

@@ -1,6 +1,5 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
-import { User } from 'src/common/interfaces/user.interface';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
@@ -11,6 +10,8 @@ import {
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { BikesStatusFilterDto } from 'src/modules/bikes/dto/bikesStatusFilter.dto';
 import { BikeResponseDto } from 'src/modules/bikes/dto/BikeResponseDto.dto';
+import { ExtendedUserDto } from '../dto/user-response.dto';
+import { SafeUser } from '../types/safe-user.type';
 
 @ApiTags('Users')
 @Controller('users')
@@ -21,10 +22,9 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('my-profile')
   @ApiOperation({ summary: 'Get my profile' })
-  async getMyProfile(@Req() req): Promise<User | null> {
-    const user = await this.usersService.getUserByEmail(req.user.email);
-    if (!user) return null;
-    return user;
+  @ApiOkResponse({ type: ExtendedUserDto })
+  async getMyProfile(@Req() req): Promise<SafeUser> {
+    return this.usersService.getUserByEmail(req.user.email);
   }
 
   @ApiBearerAuth('access-token')

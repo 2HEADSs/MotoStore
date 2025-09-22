@@ -11,10 +11,9 @@ import { ListingStatus, User } from '@prisma/client';
 import { BikesService } from 'src/modules/bikes/services/bikes.service';
 import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
 import { AuthUser } from '../types/auth-user.type';
+import { SafeUser } from '../types/safe-user.type';
 
-type SafeUser = Omit<User, 'hashedPassword'>;
-
-const userSelectFields = {
+export const userSelectFields = {
   id: true,
   email: true,
   username: true,
@@ -34,7 +33,7 @@ const authUserSelect = {
   isBlocked: true,
   createdAt: true,
   updatedAt: true,
-  hashedPassword: true, // само за auth
+  hashedPassword: true,
 } as const;
 
 @Injectable()
@@ -73,7 +72,7 @@ export class UsersService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<any> {
+  async getUserByEmail(email: string): Promise<SafeUser> {
     const user = await this.db.user.findUnique({
       where: { email },
       select: userSelectFields,

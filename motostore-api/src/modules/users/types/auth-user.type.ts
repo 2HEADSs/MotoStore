@@ -1,3 +1,5 @@
+
+
 export type AuthUser = {
   id: string;
   email: string;
@@ -9,3 +11,5 @@ export type AuthUser = {
   updatedAt: Date;
   hashedPassword: string;
 };
+
+

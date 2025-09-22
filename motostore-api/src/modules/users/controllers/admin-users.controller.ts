@@ -13,7 +13,15 @@ import { AdminUsersService } from '../services/admin-users.service';
 import { ChangeUserStatusDto, UserFilterDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { Bike, User } from '@prisma/client';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { SafeUser } from '../types/safe-user.type';
+import { ExtendedUserDto } from '../dto/user-response.dto';
 
 @ApiTags('AdminUsers')
 @Controller('admin/users')
@@ -27,29 +35,33 @@ export class AdminUsersController {
 
   @Get('all')
   @ApiOperation({ summary: 'Get all users' })
-  getAll(@Query() filter: UserFilterDto) {
+  @ApiOkResponse({ type: ExtendedUserDto, isArray: true })
+  getAll(@Query() filter: UserFilterDto): Promise<ExtendedUserDto[]> {
     return this.adminUsersService.findAll(filter);
   }
 
   @Get('user-profile')
   @ApiOperation({ summary: 'Get user profile' })
-  async getUserProfile(@Query('email') email: string): Promise<User | null> {
-    // console.log('Searching for email:', email);
-    const user = await this.usersService.getUserByEmail(email);
-    if (!user) return null;
-    return user;
+  @ApiOkResponse({ type: ExtendedUserDto })
+  @ApiNotFoundResponse({ description: 'User with given email not found' })
+  async getUserProfile(
+    @Query('email') email: string,
+  ): Promise<ExtendedUserDto> {
+    return await this.usersService.getUserByEmail(email);
   }
+
   @Patch(':id/status')
   @ApiOperation({ summary: 'Block/Unblock user' })
   blockUser(
     @Param('id') id: string,
     @Body() changeUserStatusDto: ChangeUserStatusDto,
-  ): Promise<User | null> {
+  ): Promise<SafeUser> {
     return this.adminUsersService.changeUserStatus(
       id,
       changeUserStatusDto.isBlocked,
     );
   }
+
   @Get(':id/likes')
   @ApiOperation({ summary: 'Get user liked bikes' })
   userLikedBikes(@Param('id') userId: string): Promise<Bike[]> {

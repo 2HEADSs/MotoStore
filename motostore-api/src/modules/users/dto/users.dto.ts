@@ -82,3 +82,9 @@ export class ChangeUserStatusDto {
   @IsBoolean()
   isBlocked: boolean;
 }
+
+export class GetUserByEmailDto {
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+}

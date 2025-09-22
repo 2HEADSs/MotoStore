@@ -10,7 +10,11 @@ import {
 import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { AdminUsersService } from '../services/admin-users.service';
-import { ChangeUserStatusDto, UserFilterDto } from '../dto/users.dto';
+import {
+  ChangeUserStatusDto,
+  GetUserByEmailDto,
+  UserFilterDto,
+} from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { Bike, User } from '@prisma/client';
 import {
@@ -45,8 +49,8 @@ export class AdminUsersController {
   @ApiOperation({ summary: 'Get user profile' })
   @ApiOkResponse({ type: ExtendedUserDto })
   @ApiNotFoundResponse({ description: 'User with given email not found' })
-  async getUserProfile(@Query('email') email: string): Promise<SafeUser> {
-    return this.usersService.getUserByEmail(email);
+  async getUserProfile(@Query() query: GetUserByEmailDto): Promise<SafeUser> {
+    return this.usersService.getUserByEmail(query.email);
   }
 
   @Patch(':id/status')

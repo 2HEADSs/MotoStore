@@ -22,6 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { SafeUser } from '../types/safe-user.type';
 import { ExtendedUserDto } from '../dto/user-response.dto';
+import { BikeResponseDto } from 'src/modules/bikes/dto/BikeResponseDto.dto';
 
 @ApiTags('AdminUsers')
 @Controller('admin/users')
@@ -36,7 +37,7 @@ export class AdminUsersController {
   @Get('all')
   @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({ type: ExtendedUserDto, isArray: true })
-  getAll(@Query() filter: UserFilterDto): Promise<ExtendedUserDto[]> {
+  getAll(@Query() filter: UserFilterDto): Promise<SafeUser[]> {
     return this.adminUsersService.findAll(filter);
   }
 
@@ -44,14 +45,13 @@ export class AdminUsersController {
   @ApiOperation({ summary: 'Get user profile' })
   @ApiOkResponse({ type: ExtendedUserDto })
   @ApiNotFoundResponse({ description: 'User with given email not found' })
-  async getUserProfile(
-    @Query('email') email: string,
-  ): Promise<ExtendedUserDto> {
-    return await this.usersService.getUserByEmail(email);
+  async getUserProfile(@Query('email') email: string): Promise<SafeUser> {
+    return this.usersService.getUserByEmail(email);
   }
 
   @Patch(':id/status')
   @ApiOperation({ summary: 'Block/Unblock user' })
+  @ApiOkResponse({ type: ExtendedUserDto })
   blockUser(
     @Param('id') id: string,
     @Body() changeUserStatusDto: ChangeUserStatusDto,
@@ -64,6 +64,7 @@ export class AdminUsersController {
 
   @Get(':id/likes')
   @ApiOperation({ summary: 'Get user liked bikes' })
+  @ApiOkResponse({ type: BikeResponseDto, isArray: true })
   userLikedBikes(@Param('id') userId: string): Promise<Bike[]> {
     return this.adminUsersService.userLikedBikes(userId);
   }

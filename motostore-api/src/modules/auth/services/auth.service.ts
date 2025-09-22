@@ -54,10 +54,10 @@ export class AuthService {
         phone: user.phone,
         role: user.role,
       };
-      const access_token = this.jwtService.sign(userPayload);
+      const accessToken = this.jwtService.sign(userPayload);
       return {
-        userPayload,
-        access_token,
+        user: userPayload,
+        accessToken,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;

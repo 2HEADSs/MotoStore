@@ -9,6 +9,9 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/modules/users/services/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/common/interfaces/user.interface';
+import { UserRole } from '../types/role.type';
+import { LoginResponse } from '../types/loginResponse.type';
+import { PublicUserPayload } from '../types/publisUserPayload.type';
 
 @Injectable()
 export class AuthService {
@@ -44,17 +47,17 @@ export class AuthService {
     }
   }
 
-  async login(user: User) {
-    // console.log(user, 'AuthService => Login');
+  async login(user: User): Promise<LoginResponse> {
     try {
-      const userPayload = {
+      const userPayload: PublicUserPayload = {
         id: user.id,
         email: user.email,
         username: user.username,
         phone: user.phone,
-        role: user.role,
+        role: user.role as UserRole,
       };
       const accessToken = this.jwtService.sign(userPayload);
+
       return {
         user: userPayload,
         accessToken,

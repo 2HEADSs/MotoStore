@@ -29,7 +29,6 @@ export class AuthController {
   @ApiOkResponse({ type: AuthResponseDto })
   async register(@Body() data: CreateUserRequestBodyDto) {
     const user = await this.usersService.createUser(data);
-    // console.log(user);
     return this.authService.login(user);
   }
 }

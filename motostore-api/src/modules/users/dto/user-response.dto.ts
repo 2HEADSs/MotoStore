@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from 'src/modules/auth/types/role.type';
 
 export class SafeUserDto {
   @ApiProperty() id: string;
   @ApiProperty() email: string;
   @ApiProperty() username: string;
   @ApiProperty() phone: string;
-  @ApiProperty({ enum: ['USER', 'ADMIN'] }) role: 'USER' | 'ADMIN';
+  @ApiProperty({ enum: ['USER', 'ADMIN'] }) role: UserRole;
 }
 
 export class AuthResponseDto {

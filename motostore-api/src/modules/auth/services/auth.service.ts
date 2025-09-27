@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -11,13 +12,13 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/common/interfaces/user.interface';
 import { UserRole } from '../types/role.type';
 import { LoginResponse } from '../types/loginResponse.type';
-import { PublicUserPayload } from '../types/publisUserPayload.type';
+import { PublicUserPayload } from '../types/publicUserPayload.type';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -30,7 +31,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
       if (user.isBlocked) {
-        throw new UnauthorizedException('Account is disabled');
+        throw new ForbiddenException('Account is disabled');
       }
       const { hashedPassword, ...userWithoutPassword } = user;
       return userWithoutPassword;
@@ -53,10 +54,9 @@ export class AuthService {
         id: user.id,
         email: user.email,
         username: user.username,
-        phone: user.phone,
         role: user.role as UserRole,
       };
-      const accessToken = this.jwtService.sign(userPayload);
+      const accessToken = await this.jwtService.signAsync(userPayload);
 
       return {
         user: userPayload,

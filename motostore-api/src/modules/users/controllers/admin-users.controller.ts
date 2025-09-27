@@ -12,6 +12,7 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { AdminUsersService } from '../services/admin-users.service';
 import {
   ChangeUserStatusDto,
+  ExtendedUserDto,
   GetUserByEmailDto,
   UserFilterDto,
 } from '../dto/users.dto';
@@ -25,7 +26,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SafeUser } from '../types/safe-user.type';
-import { ExtendedUserDto } from '../dto/user-response.dto';
 import { BikeResponseDto } from 'src/modules/bikes/dto/BikeResponseDto.dto';
 
 @ApiTags('AdminUsers')

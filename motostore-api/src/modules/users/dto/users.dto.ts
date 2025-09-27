@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
+import { SafeUserDto } from 'src/modules/auth/types/authResponse.dto';
 
 export class CreateUserRequestBodyDto {
   @ApiProperty({
@@ -87,4 +88,10 @@ export class GetUserByEmailDto {
   @ApiProperty()
   @IsEmail()
   email: string;
+}
+
+export class ExtendedUserDto extends SafeUserDto {
+  @ApiProperty() createdAt: Date;
+  @ApiProperty() updatedAt: Date;
+  @ApiProperty() isBlocked: boolean;
 }

@@ -10,8 +10,8 @@ import {
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { BikesStatusFilterDto } from 'src/modules/bikes/dto/bikesStatusFilter.dto';
 import { BikeResponseDto } from 'src/modules/bikes/dto/BikeResponseDto.dto';
-import { ExtendedUserDto } from '../dto/user-response.dto';
 import { SafeUser } from '../types/safe-user.type';
+import { ExtendedUserDto } from '../dto/users.dto';
 
 @ApiTags('Users')
 @Controller('users')

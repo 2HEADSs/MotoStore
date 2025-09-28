@@ -12,7 +12,6 @@ import {
 } from '@nestjs/swagger';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthResponseDto } from 'src/modules/auth/types/authResponse.dto';
-import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -42,6 +41,7 @@ export class AuthController {
   async register(
     @Body() data: CreateUserRequestBodyDto,
   ): Promise<AuthResponseDto> {
+    console.log(data);
     const user = await this.usersService.createUser(data);
     return this.authService.login(user);
   }

@@ -7,7 +7,7 @@ import {
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CreateUserRequestBodyDto } from '../dto/users.dto';
 import * as bcrypt from 'bcrypt';
-import { ListingStatus, User } from '@prisma/client';
+import { ListingStatus } from '@prisma/client';
 import { BikesService } from 'src/modules/bikes/services/bikes.service';
 import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
 import { AuthUser } from '../types/auth-user.type';

@@ -21,9 +21,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     role: UserRole;
   }): Promise<UserValidateData> {
     const isBlocked = await this.usersService.getUserStatusById(payload.id);
-    if (isBlocked === null) {
-      throw new ForbiddenException('Account not found');
-    }
 
     if (isBlocked) {
       throw new ForbiddenException('Account is disabled');

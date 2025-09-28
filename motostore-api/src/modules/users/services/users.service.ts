@@ -10,8 +10,9 @@ import * as bcrypt from 'bcrypt';
 import { ListingStatus } from '@prisma/client';
 import { BikesService } from 'src/modules/bikes/services/bikes.service';
 import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
-import { AuthUser } from '../types/auth-user.type';
-import { SafeUser } from '../types/safe-user.type';
+import { AuthUser } from '../types/authUser.type';
+import { SafeUser } from '../types/safeUser.type';
+import { UserStatus } from '../types/userStatus';
 
 export const userSelectFields = {
   id: true,
@@ -106,10 +107,11 @@ export class UsersService {
     return this.bikesService.findMyBikes(userId, status);
   }
 
-  async getUserStatusById(id: string) {
-    return this.db.user.findUnique({
+  async getUserStatusById(id: string): Promise<UserStatus | null> {
+    const user = await this.db.user.findUnique({
       where: { id },
       select: { id: true, isBlocked: true },
     });
+    return user;
   }
 }

@@ -25,7 +25,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SafeUser } from '../types/safe-user.type';
+import { SafeUser } from '../types/safeUser.type';
 import { BikeResponseDto } from 'src/modules/bikes/dto/BikeResponseDto.dto';
 
 @ApiTags('AdminUsers')

@@ -7,7 +7,7 @@ import { Bike, Role } from '@prisma/client';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { UserFilterDto } from '../dto/users.dto';
 import { userSelectFields } from './users.service';
-import { SafeUser } from '../types/safe-user.type';
+import { SafeUser } from '../types/safeUser.type';
 
 @Injectable()
 export class AdminUsersService {

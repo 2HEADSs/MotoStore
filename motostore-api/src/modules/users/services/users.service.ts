@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CreateUserRequestBodyDto } from '../dto/users.dto';
@@ -106,11 +107,14 @@ export class UsersService {
     return this.bikesService.findMyBikes(userId, status);
   }
 
-  async getUserStatusById(id: string): Promise<boolean | null> {
+  async getUserStatusById(id: string): Promise<boolean> {
     const result = await this.db.user.findUnique({
       where: { id },
       select: { isBlocked: true },
     });
-    return result?.isBlocked ?? null;
+    if (!result) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    return result.isBlocked;
   }
 }

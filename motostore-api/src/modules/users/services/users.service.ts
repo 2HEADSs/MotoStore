@@ -12,7 +12,6 @@ import { BikesService } from 'src/modules/bikes/services/bikes.service';
 import { BikeWithMeta } from 'src/modules/bikes/types/bikes-with-meta.type';
 import { AuthUser } from '../types/authUser.type';
 import { SafeUser } from '../types/safeUser.type';
-import { UserStatus } from '../types/userStatus';
 
 export const userSelectFields = {
   id: true,
@@ -107,11 +106,11 @@ export class UsersService {
     return this.bikesService.findMyBikes(userId, status);
   }
 
-  async getUserStatusById(id: string): Promise<UserStatus | null> {
-    const user = await this.db.user.findUnique({
+  async getUserStatusById(id: string): Promise<boolean | null> {
+    const result = await this.db.user.findUnique({
       where: { id },
-      select: { id: true, isBlocked: true },
+      select: { isBlocked: true },
     });
-    return user;
+    return result?.isBlocked ?? null;
   }
 }

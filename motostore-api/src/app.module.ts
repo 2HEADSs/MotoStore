@@ -7,6 +7,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { BikesModule } from './modules/bikes/bikes.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { StorageModule } from './modules/storage/storage.module';
 
 @Module({
   imports: [
@@ -14,12 +15,14 @@ import { AuthModule } from './modules/auth/auth.module';
     UsersModule,
     BikesModule,
     AuthModule,
+    StorageModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60,
         limit: 10,
       },
     ]),
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [
